@@ -7,7 +7,7 @@
     <div class="search-box">
       <input type="text" class="" name="search-text" placeholder="查找笔记本" v-model="searchText"/>
     </div>
-    <div class="notebook-list">
+    <div class="notebook-list" v-if="noteBookList.length !== 0">
       <ul>
         <li class="notebook-detail" v-bind="noteBookList" v-for="item in noteBookList" v-if="item.cn_notebook_type_id != 4">
           <div class="detail-left">
@@ -26,6 +26,11 @@
         </li>
 
       </ul>
+    </div>
+    <div class="notebook-logo" v-else>
+      <span class="fa fa-book logo"></span>
+      <span>还没有笔记本？</span>
+      <span>赶快<i>点击<i class="fa fa-plus"></i>号</i>添加吧</span>
     </div>
   </div>
 </template>
@@ -46,6 +51,7 @@
     computed:{
 
     },
+
     watch:{
       searchText:function (value) {
         if(!value){
@@ -147,7 +153,6 @@
           content: {
             element: 'input',
             attributes: {
-              // placeholder: "给笔记本起个名字，如：springboot",
               type: 'text',
               value:val
             },
@@ -226,6 +231,7 @@
         });
       },
     },
+
     mounted() {
       api.post('/notebook/noteBookList.do', {
         userId: store.state.user.cn_user_id
@@ -261,7 +267,6 @@
       height: 60px
       text-align: center
       border-bottom: 1px #687b7c solid
-
       input
         width: 360px
         height: 40px
@@ -291,8 +296,6 @@
       overflow-x: hidden
       flex: 1
       ul
-        overflow-y: scroll
-        overflow-x: hidden
         li
           height: 60px;
           width: 400px;
@@ -333,4 +336,18 @@
                 margin-right: 5px
 
 
+    .notebook-logo
+      text-align: center;
+      margin-top: 50%
+      .logo
+        font-size: 50px;
+        color: #2dbe60
+      i
+        text-indent: 10px
+      span
+        width: 400px;
+        height: 20px;
+        line-height: 20px;
+        display: inline-block
+        text-indent: 10px;
 </style>

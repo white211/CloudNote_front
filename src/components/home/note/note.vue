@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
   <div class="note">
     <div class="top">
       <span>全部笔记</span>
@@ -7,7 +7,7 @@
       <span class="record">{{noteList.length}}条记录</span>
       <span class="select">选项<span class="fa fa-angle-down"></span></span>
     </div>
-    <div class="note-list">
+    <div class="note-list" v-if="noteList.length !== 0">
       <ul>
         <li v-for="item in noteList">
           <div class="note-detail-left" @click="skim(item)">
@@ -18,7 +18,11 @@
             </span>
           </div>
           <div class="note-detail-right">
-            <span class="fa fa-share-alt" title="分享笔记" @click="shareNote(item.cn_note_id,3)"></span>
+            <span class="fa fa-share-alt" title="分享笔记" @click="shareNote(item.cn_note_id)"
+                  v-clipboard:copy="message"
+                  v-clipboard:success="onCopy"
+                  v-clipboard:error="onError"></span>
+
             <span class="fa fa-star-o" title="收藏" v-if="item.cn_note_type_id !=2"
                   @click="StoreNote(item.cn_note_id,2)"></span>
             <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item.cn_note_id,1)"></span>
@@ -27,7 +31,11 @@
         </li>
       </ul>
     </div>
-
+    <div class="note-logo" v-else>
+      <span class="fa fa-file-text-o logo"></span>
+      <span>还没有笔记？</span>
+      <span>赶快<i>点击左侧<i class="fa fa-plus"></i>号</i>添加吧</span>
+    </div>
   </div>
 </template>
 
@@ -36,12 +44,15 @@
   import store from '../../../store';
   import swal from 'sweetalert';
 
+
   export default {
     data() {
       return {
         name: "note",
         noteList: [],
-
+        message:'',
+        userId:'',
+        noteId:''
       };
     },
     mounted() {
@@ -57,8 +68,39 @@
     computed: {},
     watch: {},
     methods: {
-      shareNote(noteId) {
+      onCopy() {
+         swal({
+           title:'',
+           text:'分享链接:'+this.message,
+           closeOnClickOutside: false,
+           button:{
+             confirm:'',
+             text:'复制链接',
+             closeModal:true,
+           }
+         })
+           .then((res)=>{
+             // api.post('/note/updateNoteTypeId.do',{
+               // noteId:this.noteId,
+               // noteTypeId:3
+             // }).then((res)=>{
+               swal({
+                 title:'',
+                 text:'复制成功',
+                 icon:'success',
+                 timer:3000
+               });
+             // });
+         });
+      },
+      onError() {
+        swal('复制失败','请自动复制链接进行分享'+this.message,'');
+      },
 
+      shareNote(noteId) {
+       this.userId =  store.state.user.cn_user_id;
+       this.message = window.location.origin+'/note/shareNote/'+this.userId+'/'+ noteId;
+       this.noteId = noteId;
       },
       deleteNote(noteId, noteTypeId) {
         swal({
@@ -134,7 +176,7 @@
         });
       },
       skim(value) {
-        this.$router.push({path: `/home/note/${value.cn_note_id}`});
+        this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
       }
     },
 
@@ -220,6 +262,20 @@
             span
               display: block;
               height: 20px;
+              font-size :15px;
 
-
+    .note-logo
+      text-align: center;
+      margin-top: 50%
+      .logo
+        font-size: 50px;
+        color: #2dbe60
+      i
+        text-indent: 10px
+      span
+        width: 400px;
+        height: 20px;
+        line-height: 20px;
+        display: inline-block
+        text-indent: 10px;
 </style>

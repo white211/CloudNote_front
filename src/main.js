@@ -4,28 +4,39 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import store from './store';
-import marked from 'marked';
-import scroll from 'vue-scroll';
-Vue.use(scroll);
+import Marked from 'marked';
 
+//boostrap的相关配置
 import 'bootstrap/dist/js/bootstrap';
 import './common/styles/bootstrap/flatly.css';
-// import './common/slide/jquery-nav-150515164739/js/classie.js';
-// import './common/slide/jquery-nav-150515164739/js/mlpushmenu.js';
-// import './common/slide/jquery-nav-150515164739/js/modernizr.custom.js';
+//font-awesome的相关配置
 import 'font-awesome/css/font-awesome.min.css';
 
+// oven-mdEditor markdown的相关配置
 import '../static/css/reset.scss';
 /*引入github的markdown样式文件*/
 import '../static/css/github-markdown.css';
 /*引入atom的代码高亮样式文件*/
 import '../static/css/atom-one-dark.min.css';
 
-import  '../static/js/highlight.min.js';
-import  '../static/js/rangeFn.js';
+import '../static/js/highlight.min.js';
+import '../static/js/rangeFn.js';
 
+import mavonEditor from 'mavon-editor';
+import 'mavon-editor/dist/css/index.css';
+
+import clipboard from 'vue-clipboard2';
+
+// use
+Vue.use(mavonEditor);
+Vue.use(clipboard);
 
 Vue.config.productionTip = false;
+
+Vue.filter('mark2html', (markdown) => {
+  return Marked(markdown);
+});
+
 
 /* eslint-disable no-new */
 new Vue({

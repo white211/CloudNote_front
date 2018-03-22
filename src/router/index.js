@@ -1,14 +1,16 @@
 import Vue from 'vue';
 
-
 import Router from 'vue-router';
 import Login from '../components/login.vue';
 import Main from '../components/main.vue';
 import Register from '../components/register.vue';
 import Home from '../components/home/index';
 import Activate from '../components/activate';
-// import NewNote from '../components/home/note/newNote';
-// import NewNoteBook from '../components/home/notebook/newNoteBook';
+import Editor from '../components/home/editor';
+import UpdatePass from '../components/home/user/updatePass';
+import UserInfo from '../components/home/user/userInfo'
+import Msg from '../components/home/user/msg'
+import ShareNote from '../components/home/note/shareNote';
 
 Vue.use(Router);
 
@@ -34,36 +36,43 @@ export default new Router({
     {
       path: '/home',
       component: Home,
-      // children: [
-      //   {
-      //     path: 'newnote',
-      //     component: NewNote,
-      //   },
-      //   {
-      //     path:'newnotebook',
-      //     component:NewNoteBook,
-      //   }
-      // ]
+      redirect:'/home/newNote',
+      children: [
+        {
+          path: 'newNote',
+          component: Editor,
+        },
+        {
+          path: 'newNote/:id',
+          component: Editor,
+        },
+        {
+          path:'/user/userInfo',
+          component:UserInfo
+        },
+        {
+          path:'/user/updatePass',
+          component:UpdatePass
+        },
+        {
+          path:'/user/msg',
+          component:Msg
+        }
+      ]
     },
-    {
-      path: '/home/note/:id',
-      component: Home,
-      // children: [
-      //   {
-      //     path: 'newnote',
-      //     component: NewNote,
-      //   },
-      //   {
-      //     path:'newnotebook',
-      //     component:NewNoteBook,
-      //   }
-      // ]
-    },
+
     {
       path: '/user/activate/:code',
       name: 'activate',
       component: Activate
+    },
+
+    {
+      path:'/note/shareNote/:userId/:id',
+      name:'shareNote',
+      component:ShareNote
     }
+
   ]
 });
 

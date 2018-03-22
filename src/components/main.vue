@@ -1,5 +1,5 @@
 <template>
-  <div id="mai" style="max-width: 2000px;min-width: 660px;margin: 0 auto;border-top: #74898a 2px solid;">
+  <div  style="max-width: 2000px;min-width: 660px;margin: 0 auto;border-top: #74898a 2px solid;">
     <!--box-shadow: 0px 2px 8px 1px rgba(0,0,0,0.2);-->
     <div id="nav">
 
