@@ -1,9 +1,15 @@
 <template>
+
   <div class="index">
+
     <div class="my-container">
+
       <router-view/>
+
     </div>
+
     <div class="sidebar">
+
       <div class="static-bar">
         <!--logo标志-->
         <router-link to="/">
@@ -54,9 +60,12 @@
 
         <!--个人头像-->
         <div class="info" title="用户中心">
-            <label for="info">
-              <img src="@/assets/1.jpg" alt="" class="avatar"/>
-            </label>
+          <label for="info">
+            <div class="avatar">
+              <img v-bind:src="url" alt="" v-if="url"/>
+              <img src="@/assets/default.png" alt="" v-else/>
+            </div>
+          </label>
         </div>
       </div>
 
@@ -66,7 +75,7 @@
         <div class="block-bar">
           <input v-model="toggleTab" value="search-box" id="search-box" type="radio" name="toggle">
           <div class="detail">
-            <input type="text" placeholder="搜索笔记">
+            <findNote/>
           </div>
         </div>
         <div class="block-bar">
@@ -103,9 +112,15 @@
           <input type="checkbox" name="info" id="info" v-model="info"/>
           <div class="info-block">
             <div class="info-block-avatar">
-              <div id="avatar">
-                <img src="@/assets/1.jpg" alt="" title="个人头像"/>
-              </div>
+              <!--<router-link to="/user/updateAvatar">-->
+              <label for="openFile">
+                <div id="avatar">
+                  <input @change="updateAvatar($event)" type="file" name="avatar" id="openFile"/>
+                  <img v-bind:src="url" alt="" v-if="url" title="点击更换头像"/>
+                  <img src="@/assets/default.png" alt="" v-else title="点击更换头像"/>
+                </div>
+              </label>
+              <!--</router-link>-->
               <span>{{email}}</span>
             </div>
             <div class="fuc-list">
@@ -127,7 +142,9 @@
       </div>
 
     </div>
+
   </div>
+
 </template>
 
 <script>
@@ -136,11 +153,13 @@
   import tag from './tags/tag';
   import trash from './trash/trash';
   import like from './store/store';
+  import findNote from './note/findNote';
 
   import api from '../../api';
   import store from '../../store';
   import swal from 'sweetalert';
   import editor from './editor';
+  import axios from 'axios';
 
   export default {
 
@@ -157,8 +176,10 @@
         noteId: '',
         info: '',
         email: '',
+        url: ''
       };
     },
+
     components: {
       notebook,
       note,
@@ -166,7 +187,7 @@
       tag,
       like,
       trash,
-
+      findNote
     },
 
     methods: {
@@ -182,6 +203,28 @@
         this.info = false;
       },
 
+      updateAvatar(e) {
+        // 第一步.将图片上传到服务器.
+        var formdata = new FormData();
+        formdata.append('image', e.target.files[0]);
+        formdata.append('userId', store.state.user.cn_user_id);
+        axios({
+          url: 'http://127.0.0.1:8080/user/updataAvatar.do',
+          method: 'post',
+          data: formdata,
+          headers: {'Content-Type': 'multipart/form-data'},
+        }).then((res) => {
+          if (res.data.status === 0) {
+            var url = res.data.data;
+            this.url = url;
+            let user = this.$store.state.user;
+            user.cn_user_avatar = url;
+            this.$store.commit('user', user);
+          }
+        });
+        console.log(e.target.files[0]);
+      },
+
     },
 
     mounted() {
@@ -189,6 +232,7 @@
         this.$router.push("/login");
       } else {
         this.email = store.state.user.cn_user_email;
+        this.url = store.state.user.cn_user_avatar;
       }
 
       if (this.activeNoteId) {
@@ -196,15 +240,16 @@
           noteId: this.activeNoteId
         }).then((res) => {
           this.noteLabelId = res.data.data.cn_note_label_id,
-            this.noteBookId = res.data.data.cn_note_book_id,
-            this.noteTitle = res.data.data.cn_note_title,
-            this.noteDesc = res.data.data.cn_note_desc,
-            this.msg = res.data.data.cn_note_content;
+          this.noteBookId = res.data.data.cn_note_book_id,
+          this.noteTitle = res.data.data.cn_note_title,
+          this.noteDesc = res.data.data.cn_note_desc,
+          this.msg = res.data.data.cn_note_content;
           this.noteId = res.data.data.cn_note_id;
-        });
+      });
       }
 
     },
+
   }
   ;
 </script>
@@ -280,6 +325,11 @@
             width: 50px
             height: 50px
             border-radius: 50%
+            border :1px solid #95a5a6;
+            img
+              width: 50px
+              height: 50px
+              border-radius: 50%
             &:hover
               cursor: pointer
 
@@ -350,7 +400,9 @@
           border-bottom: 1px solid #95a5a6;
           #avatar
             width: 320px;
-            margin-top: 30px;
+            margin-top: 10px;
+            input[type="file"]
+              display: none;
             img
               width: 80px;
               height: 80px;
@@ -359,10 +411,10 @@
               margin: 0 auto
               border: 5px solid rgba(255, 255, 255, 1);
               &:hover
-                border: 3px solid green;
+                border: 3px solid rgba(0, 0, 0, 0.05);
           span
             display: block
-            margin-top: 10px
+            margin-top: 0px
 
         .fuc-list
           margin-top: 20px

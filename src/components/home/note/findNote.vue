@@ -1,26 +1,18 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
-  <div class="note">
+  <div class="findNote">
     <div class="top">
-      <span>全部笔记</span>
+      <span>查找笔记</span>
     </div>
     <div class="selectBar">
-      <span class="record">{{noteList.length}}条记录</span>
-      <div class="select">
-        <el-dropdown>
-          <span class="el-dropdown-link">
-            选项<i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>创建日期（最早优先）</el-dropdown-item>
-            <el-dropdown-item>创建日期（最新优先）</el-dropdown-item>
-            <el-dropdown-item>更新日期（最早优先）</el-dropdown-item>
-            <el-dropdown-item>更新日期（最新优先）</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+      <div>
+        <el-input placeholder="请输入内容" v-model="searchText" class="input-with-select">
+          <el-select v-model="select" slot="prepend" placeholder="笔记本">
+            <el-option v-for="item in noteBookList" v-if="item.noteCount !== 0" v-bind:label="item.cn_notebook_name" v-bind:value="item.cn_notebook_id"></el-option>
+          </el-select>
+        </el-input>
       </div>
-      <!--<span class="select">选项<span class="fa fa-angle-down"></span></span>-->
     </div>
-    <div class="note-list" v-if="noteList.length !== 0">
+    <div class="notelist" v-if="noteList.length !== 0">
       <ul>
         <li v-for="item in noteList">
           <div class="note-detail-left" @click="skim(item)">
@@ -44,42 +36,28 @@
         </li>
       </ul>
     </div>
-    <div class="note-logo" v-else>
-      <span class="fa fa-file-text-o logo"></span>
-      <span>还没有笔记？</span>
-      <span>赶快<i>点击左侧<i class="fa fa-plus"></i>号</i>添加吧</span>
+    <div class="store-logo" v-else>
+      <span class="fa fa-search logo"></span>
+      <span>根据笔记内容或标题搜索对应笔记本中的笔记</span>
     </div>
   </div>
 </template>
 
 <script>
-  import store from '../../../store';
-  import swal from 'sweetalert';
-  import noteService from "../../../Service/noteService";
-  import baseService from '../../../Service/baseService';
+  import  store from '../../../store';
+  import noteService from  '../../../Service/noteService';
+  import baseService from '../../../Service/baseService'
 
   export default {
+
     data() {
       return {
-        name: "note",
-        message: '',
-        userId: '',
-        noteId: ''
+        name: "findNote",
+        searchText: '',
+        select:'',
+        noteList:[],
+        message:''
       };
-    },
-
-    mounted() {
-      baseService.getNoteList();
-    },
-
-    computed: {
-      noteList() {
-        return store.state.main.noteList;
-      }
-    },
-
-    watch: {
-
     },
 
     methods: {
@@ -120,16 +98,43 @@
       skim(value) {
         this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
       }
-
     },
 
+    mounted() {
+       baseService.getNoteBookList();
+    },
 
+    computed:{
+      noteBookList(){
+         return store.state.main.noteBookList;
+      },
+    },
+
+    watch:{
+      searchText(value){
+        if(this.select && value){
+          noteService.SearchText(value,this.select).then((res)=>{
+            if(res){
+              this.noteList = res;
+            }else {
+              this.noteList =[];
+            }
+          });
+        }else{
+          this.noteList =[];
+        }
+      },
+
+
+    }
 
   };
+
+
 </script>
 
 <style scoped lang="stylus">
-  .note
+  .findNote
     display: flex
     flex-direction: column
     .top
@@ -142,20 +147,30 @@
         line-height: 50px;
         height: 50px;
     .selectBar
-      height: 50px;
-      line-height: 50px;
+      height: 80px;
+      line-height: 80px;
       width: 400px;
-      padding-left: 30px;
-      padding-right: 30px;
+      padding-right: 10px;
       border-bottom: 3px solid #dce4ec;
-      .record
-        float: left;
-      .select
-        float: right;
-      &:hover
-        cursor: pointer
-
-    .note-list
+      padding-left :10px;
+      .el-select
+        width: 90px;
+      .input-with-select
+      .el-input-group__prepend
+        width :370px;
+    .store-logo
+      text-align: center;
+      margin-top: 50%
+      .logo
+        font-size: 80px;
+        height :80px;
+        color: #2dbe60
+      span
+        width: 400px;
+        height: 20px;
+        line-height: 20px;
+        display: inline-block
+    .notelist
       overflow-y: scroll
       overflow-x: hidden
       flex: 1
@@ -207,18 +222,5 @@
               height: 20px;
               font-size: 15px;
 
-    .note-logo
-      text-align: center;
-      margin-top: 50%
-      .logo
-        font-size: 50px;
-        color: #2dbe60
-      i
-        text-indent: 10px
-      span
-        width: 400px;
-        height: 20px;
-        line-height: 20px;
-        display: inline-block
-        text-indent: 10px;
+
 </style>

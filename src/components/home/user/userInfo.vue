@@ -1,28 +1,38 @@
 <template>
   <div class="userInfo">
-     <span>个人信息</span>
 
   </div>
 </template>
 
 <script>
+  import api from "../../../api";
+
+
   export default {
     data() {
       return {
-        name: "user-info"
+        name: "userInfo",
+        text: '',
+        url:''
       };
     },
 
-    mounted(){
+    mounted() {
+        api.post('/user/getWeather.do',{
+          city:'广州'
+        }).then((res)=> {
+          console.log(res);
+          this.url = res.data.data;
+        });
 
     },
-    methods:{
+
+    methods: {
 
     },
 
-
-
-  };
+  }
+  ;
 </script>
 
 <style scoped lang="stylus">

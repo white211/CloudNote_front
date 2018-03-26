@@ -57,7 +57,8 @@ export default new Router({
         {
           path:'/user/msg',
           component:Msg
-        }
+        },
+
       ]
     },
 

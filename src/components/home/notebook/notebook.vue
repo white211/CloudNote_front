@@ -1,5 +1,6 @@
-<template>
-  <div class="notebook">
+<template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
+
+  <div class="notebook" v-if="flag">
     <div class="top">
       <span class="text">笔记本</span>
       <span class="fa fa-plus plus" title="创建笔记本" @click="newNoteBook"></span>
@@ -9,14 +10,15 @@
     </div>
     <div class="notebook-list" v-if="noteBookList.length !== 0">
       <ul>
-        <li class="notebook-detail" v-bind="noteBookList" v-for="item in noteBookList" v-if="item.cn_notebook_type_id != 4">
+        <li class="notebook-detail" v-bind="noteBookList" v-for="item in noteBookList"
+            v-if="item.cn_notebook_type_id != 4" @click="openNoteBook(item.noteList,item.cn_notebook_name,item.noteCount)">
           <div class="detail-left">
             <span>{{item.cn_notebook_name}}</span>
             <span>{{item.noteCount}}条记录</span>
           </div>
-
           <div class="detail-right">
-            <span class="fa fa-pencil-square-o" title="重命名" @click="resetNoteBookName(item.cn_notebook_id,item.cn_notebook_name)"></span>
+            <span class="fa fa-pencil-square-o" title="重命名"
+                  @click="resetNoteBookName(item.cn_notebook_id,item.cn_notebook_name)"></span>
 
             <span class="fa fa-star-o" title="收藏" v-if="item.cn_notebook_type_id !=2"
                   @click="Store(item.cn_notebook_id,2)"></span>
@@ -33,44 +35,120 @@
       <span>赶快<i>点击<i class="fa fa-plus"></i>号</i>添加吧</span>
     </div>
   </div>
+
+  <div class="second" v-else>
+
+    <div class="second-top">
+       <span class="fa fa-hand-o-left return" @click="closeNoteBook">
+          返回笔记本
+       </span>
+       <div class="second-bookname">
+          <span class="fa fa-book fabook">
+          </span>
+         <span class="fatext">{{title}}</span>
+       </div>
+       <div class="second-selectbar">
+          <span>{{count}}条记录</span>
+         <div class="select">
+           <el-dropdown>
+          <span class="el-dropdown-link">
+            选项<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+             <el-dropdown-menu slot="dropdown">
+               <el-dropdown-item>创建日期（最早优先）</el-dropdown-item>
+               <el-dropdown-item>创建日期（最新优先）</el-dropdown-item>
+               <el-dropdown-item>更新日期（最早优先）</el-dropdown-item>
+               <el-dropdown-item>更新日期（最新优先）</el-dropdown-item>
+             </el-dropdown-menu>
+           </el-dropdown>
+         </div>
+       </div>
+    </div>
+
+    <div class="second-noteList" v-if="noteList.length !== 0">
+      <ul>
+        <li v-for="item in noteList" v-if="item.cn_note_type_id !== 4">
+          <div class="note-detail-left" @click="skim(item)">
+            <span class="note-title">{{item.cn_note_title}}</span>
+            <span class="note-creatTime">{{item.cn_note_creatTime}}</span>
+            <span class="note-content">
+              {{item.cn_note_content}}
+            </span>
+          </div>
+          <div class="note-detail-right">
+            <span class="fa fa-share-alt" title="分享笔记" @click="shareNote(item.cn_note_id)"
+                  v-clipboard:copy="message"
+                  v-clipboard:success="onCopy"
+                  v-clipboard:error="onError"></span>
+
+            <span class="fa fa-star-o" title="收藏" v-if="item.cn_note_type_id !=2"
+                  @click="StoreNote(item.cn_note_id,2)"></span>
+            <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item.cn_note_id,1)"></span>
+            <span class="fa fa-trash-o" title="删除" @click="deleteNote(item.cn_note_id,4)"></span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="second-logo" v-else>
+      <span class="fa fa-file-text-o logo"></span>
+      <span>还没有笔记？</span>
+      <span>赶快<i>点击左侧<i class="fa fa-plus"></i>号</i>添加吧</span>
+    </div>
+  </div>
+
 </template>
 
 <script>
   import api from '../../../api';
   import store from '../../../store';
+  import baseService from '../../../Service/baseService';
+  import notebookService from '../../../Service/noetbookService';
+  import noteService from '../../../Service/noteService';
 
   export default {
+
     data() {
       return {
         name: "notebook",
-        noteBookList: '',
         noteBookType: '',
-        searchText:''
+        searchText: '',
+        flag: true,
+        second:{
+          title:'',
+          count:'',
+          noteList:[]
+        },
+        message:'',
       };
     },
-    computed:{
 
+    computed: {
+      noteBookList() {
+        return store.state.main.noteBookList;
+      }
     },
 
-    watch:{
-      searchText:function (value) {
-        if(!value){
-          api.post('notebook/noteBookList.do',{
-            userId:store.state.user.cn_user_id,
-          }).then((res)=>{
+    watch: {
+      searchText: function (value) {
+        if (!value) {
+          api.post('notebook/noteBookList.do', {
+            userId: store.state.user.cn_user_id,
+          }).then((res) => {
             if (res.data.status === 0) {
-              this.noteBookList = res.data.data;
-              console.log(res);
+              store.commit("noteBookList",baseService.getNoteBookList());
+              // this.noteBookList = res.data.data;
+              // console.log(res);
             }
           });
-        }else{
-          api.post('notebook/findNoteBook.do',{
+        } else {
+          api.post('notebook/findNoteBook.do', {
             searchText: value,
-            userId:store.state.user.cn_user_id,
-          }).then((res)=>{
+            userId: store.state.user.cn_user_id,
+          }).then((res) => {
             if (res.data.status === 0) {
-              this.noteBookList = res.data.data;
-              console.log(res);
+              store.commit("noteBookList",res.data.data);
+              // this.noteBookList = res.data.data;
+              // console.log(res);
             }
           });
         }
@@ -79,166 +157,78 @@
     },
 
     methods: {
+
       newNoteBook() {
-        swal({
-          title: "新建笔记本",
-          text: "",
-          buttons: true,
-          dangerMode: true,
-          content: {
-            element: 'input',
-            attributes: {
-              placeholder: "给笔记本起个名字，如：springboot",
-              type: 'text',
-            },
-          },
-        })
-          .then((val) => {
-            if (val) {
-              api.post('/notebook/newNoteBook.do', {
-                userId: store.state.user.cn_user_id,
-                noteBookName: val,
-              }).then((res) => {
-                if (res.data.status === 0) {
-                  swal({
-                    title: '创建成功',
-                    icon: 'success',
-                    timer: 3000,
-                  }).then(value => {
-                    this.$router.go(0);
-                  });
-                } else {
-                  swal('创建失败', res.data.msg, 'error');
-                }
-                console.log(res);
-              });
-            }
-          });
+        notebookService.newNoteBook();
       },
+
       deleteNoteBook(id) {
-        swal({
-          title: "你确定要删除吗?",
-          text: "",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        })
-          .then((willDelete) => {
-            if (willDelete) {
-              api.post('/notebook/deleteNoteBook.do', {
-                userId: store.state.user.cn_user_id,
-                noteBookId: id,
-              }).then((res) => {
-                if (res.data.status === 0) {
-                  swal("已经被删除，可到回收站找回", {
-                    icon: "success",
-                    timer:3000
-                  }).then(value => {
-                    this.$router.go(0);
-                  });
-                } else {
-                  swal("删除失败", {
-                    icon: "error",
-                  });
-                }
-                console.log(res);
-              });
-            }
-          });
+        notebookService.deleteNoteBook(id);
       },
-      resetNoteBookName(id,val) {
+
+      resetNoteBookName(id, val) {
+        notebookService.resetNoteBookName(id, val);
+      },
+
+      Store(id, type) {
+        notebookService.Store(id, type);
+      },
+
+      openNoteBook(noteList,title,count) {
+        this.flag = false;
+        this.count = count;
+        this.title = title;
+        this.noteList = noteList;
+      },
+
+      closeNoteBook(){
+        this.flag = true;
+      },
+
+      onCopy() {
         swal({
-          title: '重命名笔记本',
-          text: '',
-          content: {
-            element: 'input',
-            attributes: {
-              type: 'text',
-              value:val
-            },
-          },
-          buttons: {
-            confirm: {
-              text: '确定',
-              closeModal: true,
-              value: true,
-              visible: true,
-              className: "",
-            },
+          title: '',
+          text: '分享链接:' + this.message,
+          closeOnClickOutside: false,
+          button: {
+            confirm: '',
+            text: '复制链接',
+            closeModal: true,
           }
         })
-          .then((val) => {
-            if (!val) {
-              return false;
-            }
-            api.post('/notebook/resetName.do', {
-              newName: val,
-              noteBookId: id,
-              userId: store.state.user.cn_user_id,
-            }).then((res) => {
-              console.log(res);
-              if (res.data.status === 0) {
-                swal('重命名成功', '', 'success').then(value => {
-                  this.$router.go(0);
-                });
-                this.mounted();
-                this.$router.replace({path: '/home'});
-              } else {
-                swal('重命名失败', res.data.msg, 'error');
-              }
+          .then((res) => {
+            swal({
+              title: '',
+              text: '复制成功',
+              icon: 'success',
+              timer: 3000
             });
           });
       },
-      Store(id, type) {
-        api.post('notebook/setNoteBookType.do', {
-          userId: store.state.user.cn_user_id,
-          noteBookId: id,
-          noteBookType: type
-        }).then((res) => {
-          if (type == 1) {
-            if (res.data.status === 0) {
-              swal({
-                title: '已取消收藏',
-                timer: 3000,
-                icon: 'success'
-              }).then(value => {
-                this.$router.go(0);
-              });
-            } else {
-              swal({
-                title: '取消收藏失败',
-                timer: 3000,
-                icon: 'error'
-              });
-            }
-          } else if (type == 2) {
-            if (res.data.status === 0) {
-              swal({
-                title: '收藏成功',
-                timer: 3000,
-                icon: 'success'
-              }).then(value => {
-                this.$router.go(0);
-              });
-            } else {
-              swal({
-                title: '收藏失败',
-                timer: 3000,
-                icon: 'error'
-              });
-            }
-          }
-        });
+      onError() {
+        swal('复制失败', '请自动复制链接进行分享' + this.message, '');
       },
+      shareNote(noteId) {
+        this.userId = store.state.user.cn_user_id;
+        this.noteId = noteId;
+        this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
+      },
+      deleteNote(noteId, noteTypeId) {
+        noteService.deleteNote(noteId,noteTypeId);
+      },
+      StoreNote(noteId, noteTypeId) {
+        noteService.StoreNote(noteId, noteTypeId);
+      },
+      skim(value) {
+        this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+      }
+
     },
 
     mounted() {
-      api.post('/notebook/noteBookList.do', {
-        userId: store.state.user.cn_user_id
-      }).then((res) => {
-        console.log(res);
-        this.noteBookList = res.data.data;
-      });
+
+      baseService.getNoteBookList();
+
     }
 
   };
@@ -335,7 +325,6 @@
               span
                 margin-right: 5px
 
-
     .notebook-logo
       text-align: center;
       margin-top: 50%
@@ -350,4 +339,123 @@
         line-height: 20px;
         display: inline-block
         text-indent: 10px;
+
+  .second
+    .second-top
+       width :400px;
+       height :200px;
+       border-bottom: 3px solid #dce4ec;
+       .return
+         width :400px;
+         height :50px;
+         line-height :50px;
+         display :block;
+         padding-left :10px;
+         padding-right :10px;
+         background-color :#595959;
+         color :white;
+         &:hover
+           cursor :pointer;
+       .second-bookname
+         display :block;
+         width :400px;
+         height:100px;
+         margin :0 auto;
+         text-align :center;
+         padding-top :15px;
+         background-color : #595959;
+         color :white;
+         .fabook
+           display :block;
+           font-size :25px;
+         .fatext
+           display :block;
+           font-size :15px;
+       .second-selectbar
+         display :block;
+         width :400px;
+         height:50px;
+         margin :0 auto;
+         padding-left :20px;
+         padding-right :20px;
+         line-height :50px;
+         span
+           display :inline-block;
+         .select
+           display :inline-block
+           float :right;
+
+
+
+    .second-noteList
+      overflow-y: scroll
+      overflow-x: hidden
+      flex: 1
+      ul
+        li
+          width: 400px;
+          height: 100px;
+          border-bottom: 1px solid #687b7c
+          padding-right: 20px
+          transition: all 0.5s
+          &:hover
+            background-color: rgba(43, 181, 92, .9);
+            color: white
+            cursor: pointer
+          .note-detail-left
+            float: left
+            width: 360px;
+            height: 100px
+            padding-left: 20px
+            text-align: left
+            padding-top: 5px
+            span
+              display: block;
+            .note-title
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              font-weight: bold
+            .note-creatTime
+              font-size: 10px
+            .note-content
+              font-size: 15px;
+              overflow: hidden;
+              text-overflow: ellipsis
+              height: 50px;
+              padding: 5px
+          .note-detail-right
+            float: right
+            height: 100px;
+            width: 10px;
+            padding-top: 20px;
+            opacity: 0
+          &:hover .note-detail-right
+            opacity: 1
+            transition: all .5s
+            color: white
+            span
+              display: block;
+              height: 20px;
+              font-size: 15px;
+
+    .second-logo
+      text-align: center;
+      margin-top: 50%
+      .logo
+        font-size: 50px;
+        color: #2dbe60
+      i
+        text-indent: 10px
+      span
+        width: 400px;
+        height: 20px;
+        line-height: 20px;
+        display: inline-block
+        text-indent: 10px;
+
+
+
+
+
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div v-if="isloaded">
     <template v-if="success">
-      <div  class="shareNote">
+      <div class="shareNote">
         <div class="nav">
           <span class="fa fa-pencil logo"></span>
           <router-link to="/">
@@ -32,7 +32,8 @@
           </div>
           <div class="userInfo">
             <div class="avatar">
-              <img src="@/assets/1.jpg" alt=""/>
+              <img v-bind:src="avatar" alt="" v-if="avatar"/>
+              <img src="@/assets/default.png" alt="" v-else/>
             </div>
             <div class="userinfo-right">
                 <span class="nickName" v-if="nickName">
@@ -55,10 +56,11 @@
           <div class="comment-block">
             <div class="comment-area">
               <div class="img">
-                <img src="@/assets/1.jpg" alt=""/>
+                <img v-bind:src="comAvatar" alt="" v-if="comAvatar"/>
+                <img src="@/assets/default.png" alt="" v-else/>
               </div>
               <div class="input">
-                <textarea  v-model="commentContent" name="comment" id="comment" placeholder="你的评论..." class="area"/>
+                <textarea v-model="commentContent" name="comment" id="comment" placeholder="你的评论..." class="area"/>
               </div>
 
               <div class="btn_com">
@@ -70,7 +72,8 @@
               <ul v-if="commentList !== null">
                 <li v-for="(item,index) in commentList">
                   <div class="lu-avatar">
-                    <img src="@/assets/1.jpg" alt=""/>
+                    <img v-bind:src="item.cn_user_avatar" alt="" v-if="item.cn_user_avatar"/>
+                    <img src="@/assets/default.png" alt="" v-else/>
                   </div>
                   <div class="lu-info">
                     <span>{{item.cn_user_email}}</span>
@@ -109,70 +112,71 @@
         noteTitle: '',
         noteTime: '',
         email: '',
-        read:'',
+        read: '',
         nickName: null,
+        avatar: '',
         showUser: null,
         success: false,
-        isloaded:false,
-        commentList:[],
-        commentSize:0,
-        comUser:{
-          userAvatar:null,
-          userNickName:null,
-        },
-        commentContent:null
+        isloaded: false,
+        commentList: [],
+        commentSize: 0,
+        commentContent: null,
+        comAvatar: ''
       };
     },
 
     mounted() {
+
+      //判断有没有用户已经登陆
       if (store.state.user !== null) {
         this.showUser = store.state.user.cn_user_email;
+        this.comAvatar = store.state.user.cn_user_avatar;
       }
-
+      //获取分享笔记的内容
       api.post('/note/findNoteById.do', {noteId: this.$route.params.id})
         .then((res) => {
           if (res.data.status === 0 && res.data.data !== null) {
-            this.success = true
+            this.success = true;
             console.log(res);
             this.noteContent = res.data.data.cn_note_content;
             this.noteTitle = res.data.data.cn_note_title;
             this.noteTime = res.data.data.cn_note_creatTime;
-            this.read= res.data.data.cn_note_read+1;
+            this.read = res.data.data.cn_note_read + 1;
           } else {
             this.success = false;
           }
           this.isloaded = true;
         });
-
+      //获取作者的内容
       api.post('/user/findUserById.do', {userId: this.$route.params.userId})
         .then((res) => {
           if (res.data.status === 0) {
             console.log(res);
             this.nickName = res.data.data.cn_user_nickname;
             this.email = res.data.data.cn_user_email;
+            this.avatar = res.data.data.cn_user_avatar;
           }
         });
-
-      api.post('/note/addRead.do',{
-         noteId: this.$route.params.id
-      }).then((res)=>{
-         if(!res.data.status){
-           console.log(res);
-         }
+      //添加笔记的阅读量
+      api.post('/note/addRead.do', {
+        noteId: this.$route.params.id
+      }).then((res) => {
+        if (!res.data.status) {
+          console.log(res);
+        }
       });
-
-      api.post('/comment/CommentListByNoteId.do',{
-         noteId:this.$route.params.id
-      }).then((res)=>{
-          if (!res.data.status){
-              this.commentList = res.data.data;
-              this.commentSize = res.data.data.length;
-          }else{
-             console.log(res);
-             this.commentList = null;
-             this.commentSize =0;
-          }
-      })
+      //获取当前笔记的评论列表
+      api.post('/comment/CommentListByNoteId.do', {
+        noteId: this.$route.params.id
+      }).then((res) => {
+        if (!res.data.status) {
+          this.commentList = res.data.data;
+          this.commentSize = res.data.data.length;
+        } else {
+          this.commentList = null;
+          this.commentSize = 0;
+        }
+      });
 
     },
 
@@ -181,41 +185,37 @@
         return marked(md);
       },
 
-      newComment(){
-        if (store.state.user===null){
-           swal('登陆之后才能评论','','error');
+      newComment() {
+        if (store.state.user === null) {
+          swal('登陆之后才能评论', '', 'error');
         }
-        api.post('/comment/newComment.do',{
-          userId:store.state.user.cn_user_id,
-          userEmail:store.state.user.cn_user_email,
-          userAvatar:store.state.user.cn_user_avatar,
-          userNickName:store.state.user.cn_user_nickname,
-          noteId:this.$route.params.id,
-          commentContent:this.commentContent
-        }).then((res)=>{
-            if(res.data.status === 0){
-              console.log(res);
-              swal('评论成功','','success').then((res)=>{
-                 api.post('/comment/CommentListByNoteId.do',{
-                   noteId:this.$route.params.id
-                 }).then((res)=>{
-                   if (!res.data.status){
-                     this.commentList = res.data.data;
-                     this.commentSize = res.data.data.length;
-                     this.commentContent='';
-                   }else{
-                     console.log(res);
-                     this.commentList = null;
-                     this.commentSize =0;
-                   }
-                 });
-               });
-            }else{
-              swal('',res.data.msg,'error');
-            }
+        api.post('/comment/newComment.do', {
+          userId: store.state.user.cn_user_id,
+          noteId: this.$route.params.id,
+          commentContent: this.commentContent
+        }).then((res) => {
+          if (res.data.status === 0) {
+            console.log(res);
+            swal('评论成功', '', 'success').then((res) => {
+              api.post('/comment/CommentListByNoteId.do', {
+                noteId: this.$route.params.id
+              }).then((res) => {
+                if (!res.data.status) {
+                  this.commentList = res.data.data;
+                  this.commentSize = res.data.data.length;
+                  this.commentContent = '';
+                } else {
+                  console.log(res);
+                  this.commentList = null;
+                  this.commentSize = 0;
+                }
+              });
+            });
+          } else {
+            swal('', res.data.msg, 'error');
+          }
         });
       }
-
 
     }
 
@@ -292,6 +292,10 @@
         padding: 20px 0 20px 0;
         .avatar
           float: left;
+          width :60px;
+          height :60px;
+          border-radius: 50%;
+          border :1px solid #dce4ec;
           img
             width: 60px;
             height: 60px;
@@ -312,6 +316,7 @@
         padding-bottom: 20px;
         clear: both;
         min-height: 350px;
+        padding-left: 20px;
         ol
           padding-left: 30px
         ul
@@ -339,7 +344,10 @@
             float: left;
             text-align: center
             line-height: 50px;
-            height: 80px;
+            height: 50px;
+            width :50px;
+            /*border :1px solid #95a5a6;*/
+            border-radius :50%;
             margin-right: 30px;
             img
               width: 50px;
@@ -357,7 +365,7 @@
               border: 1px solid black;
               border-radius: 5px;
               font-size: 18px;
-              resize :none
+              resize: none
           .btn_com
             width: 700px;
             .com_btn
@@ -369,12 +377,12 @@
               font-size: 15px;
               letter-spacing: 10px;
               text-align: center;
-              margin-right :5px;
-              margin-top :10px;
+              margin-right: 5px;
+              margin-top: 10px;
               &:hover
                 cursor: pointer;
                 background-color: rgb(152, 217, 100);
-                color :white
+                color: white
 
         .comment-list
           .number
@@ -397,10 +405,12 @@
               .lu-avatar
                 display: inline-block;
                 float: left;
-                line-height: 50px;
-                height: 50px;
+                line-height: 40px;
+                height: 40px;
                 margin-right: 20px;
-                width: 50px;
+                width: 40px;
+                /*border :1px solid #95a5a6;*/
+                border-radius :50%;
                 img
                   height: 40px;
                   line-height: 40px;

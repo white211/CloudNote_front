@@ -33,16 +33,15 @@
   import api from '../../api';
   import store from '../../store';
   import swal from 'sweetalert';
-  import {upload} from '../../upload/upload';
   import axios from 'axios';
+  import baseService from '../../Service/baseService';
+
 
   export default {
 
     data() {
       return {
         name: "editor",
-        noteBookList: '',
-        labelList: '',
         noteLabelId: 0,
         noteBookId: 0,
         noteTitle: '',
@@ -54,6 +53,7 @@
     },
 
     methods: {
+
       newNote() {
         api.post('/note/newNote.do', {
           noteBookId: this.noteBookId,
@@ -89,7 +89,6 @@
         })
       },
 
-
     },
 
     mounted() {
@@ -106,19 +105,9 @@
         });
       }
 
-      api.post('/notebook/noteBookList.do', {
-        userId: store.state.user.cn_user_id
-      }).then((res) => {
-        console.log(res);
-        this.noteBookList = res.data.data;
-      });
+      baseService.getTagList();
+      baseService.getNoteBookList();
 
-      api.post('/label/labelList.do', {
-        userId: store.state.user.cn_user_id
-      }).then((res) => {
-        console.log(res);
-        this.labelList = res.data.data;
-      });
     },
 
     computed: {
@@ -130,7 +119,17 @@
 
       activeNoteId() {
         return this.$route.params.id;
+      },
+
+      noteBookList(){
+        return store.state.main.noteBookList;
+      },
+
+      labelList(){
+        return store.state.main.tagList;
       }
+
+
     },
 
     watch: {

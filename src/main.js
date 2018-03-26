@@ -27,9 +27,14 @@ import 'mavon-editor/dist/css/index.css';
 
 import clipboard from 'vue-clipboard2';
 
+import ElementUI  from 'element-ui';
+import  'element-ui/lib/theme-chalk/index.css';
+
+
 // use
 Vue.use(mavonEditor);
 Vue.use(clipboard);
+Vue.use(ElementUI );
 
 Vue.config.productionTip = false;
 

@@ -35,139 +35,41 @@
 <script>
   import api from '../../../api';
   import store from '../../../store';
-  import swal from 'sweetalert';
+  import baseService from '../../../Service/baseService';
+  import tagService from '../../../Service/tagService';
 
   export default {
     data() {
       return {
         name: 'tag',
-        labelList: [],
         searchText: ''
       };
     },
 
+    computed:{
+      labelList(){
+        return store.state.main.tagList;
+      },
+    },
+
     mounted() {
-      api.post('/label/labelList.do', {
-        userId: store.state.user.cn_user_id
-      }).then((res) => {
-        if (res.data.status === 0) {
-          this.labelList = res.data.data;
-        }
-      });
+
+      baseService.getTagList();
+
     },
 
     methods: {
+
       newLabel() {
-        swal({
-          title: "新建标签",
-          text: "",
-          buttons: true,
-          dangerMode: true,
-          content: {
-            element: 'input',
-            attributes: {
-              placeholder: "给标签名字，如：java",
-              type: 'text',
-            },
-          },
-        })
-          .then((val) => {
-            if (val) {
-              api.post('/label/newLabel.do', {
-                userId: store.state.user.cn_user_id,
-                labelName: val,
-              }).then((res) => {
-                if (res.data.status === 0) {
-                  swal({
-                    title: '创建成功',
-                    icon: 'success',
-                    timer: 3000,
-                  }).then(value => {
-                    this.$router.go(0);
-                  });
-                } else {
-                  swal('创建失败', res.data.msg, 'error');
-                }
-                console.log(res);
-              });
-            }
-          });
+       tagService.newLabel();
       },
 
       deleteLabel(id) {
-        swal({
-          title: "你确定要删除吗?",
-          text: "",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        })
-          .then((willDelete) => {
-            if (willDelete) {
-              api.post('/label/deleteLabel.do', {
-                userId: store.state.user.cn_user_id,
-                labelId: id,
-              }).then((res) => {
-                if (res.data.status === 0) {
-                  swal("已经被删除，可到回收站找回", {
-                    icon: "success",
-                    timer: 3000
-                  }).then(value => {
-                    this.$router.go(0);
-                  });
-                } else {
-                  swal("删除失败", {
-                    icon: "error",
-                  });
-                }
-                console.log(res);
-              });
-            }
-          });
+        tagService.deleteLabel(id);
       },
 
       resetName(id, val) {
-        swal({
-          title: '重命名标签名',
-          text: '',
-          content: {
-            element: 'input',
-            attributes: {
-              type: 'text',
-              value: val
-            },
-          },
-          buttons: {
-            confirm: {
-              text: '确定',
-              closeModal: true,
-              value: true,
-              visible: true,
-              className: "",
-            },
-          }
-        })
-          .then((val) => {
-            if (!val) {
-              return false;
-            }
-            api.post('/label/updateLabelName.do', {
-              newName: val,
-              labelId: id,
-              userId: store.state.user.cn_user_id,
-            }).then((res) => {
-              console.log(res);
-              if (res.data.status === 0) {
-                swal('重命名成功', '', 'success').then(value => {
-                  this.$router.go(0);
-                });
-                this.mounted();
-                this.$router.replace({path: '/home'});
-              } else {
-                swal('重命名失败', res.data.msg, 'error');
-              }
-            });
-          });
+        tagService.resetName(id,val);
       }
 
     },
