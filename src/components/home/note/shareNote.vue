@@ -44,7 +44,7 @@
                 </span>
 
               <span class="time">
-                   {{noteTime}} 阅读 {{read}} &nbsp;&nbsp;评论 {{commentSize}}  &nbsp;&nbsp;收藏 0
+                   {{noteTime}} 阅读 {{read}} &nbsp;&nbsp;评论 {{commentSize}}  &nbsp;&nbsp;
                 </span>
             </div>
           </div>
@@ -181,6 +181,7 @@
     },
 
     methods: {
+
       mark(md) {
         return marked(md);
       },
@@ -317,6 +318,7 @@
         clear: both;
         min-height: 350px;
         padding-left: 20px;
+        padding-right :20px;
         ol
           padding-left: 30px
         ul
@@ -366,6 +368,8 @@
               border-radius: 5px;
               font-size: 18px;
               resize: none
+              padding-left :10px;
+              padding-right :10px;
           .btn_com
             width: 700px;
             .com_btn

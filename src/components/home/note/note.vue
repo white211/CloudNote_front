@@ -1,31 +1,34 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
+
   <div class="note">
+
     <div class="top">
       <span>全部笔记</span>
     </div>
+
     <div class="selectBar">
       <span class="record">{{noteList.length}}条记录</span>
       <div class="select">
-        <el-dropdown>
+        <el-dropdown trigger="click" @command="handleCommand">
           <span class="el-dropdown-link">
             选项<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>创建日期（最早优先）</el-dropdown-item>
-            <el-dropdown-item>创建日期（最新优先）</el-dropdown-item>
-            <el-dropdown-item>更新日期（最早优先）</el-dropdown-item>
-            <el-dropdown-item>更新日期（最新优先）</el-dropdown-item>
+            <el-dropdown-item command="a">创建日期（最早优先）</el-dropdown-item>
+            <el-dropdown-item command="b">创建日期（最新优先）</el-dropdown-item>
+            <el-dropdown-item command="c">更新日期（最早优先）</el-dropdown-item>
+            <el-dropdown-item command="d">更新日期（最新优先）</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <!--<span class="select">选项<span class="fa fa-angle-down"></span></span>-->
     </div>
+
     <div class="note-list" v-if="noteList.length !== 0">
       <ul>
-        <li v-for="item in noteList">
+        <li v-for="item in noteList ">
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
-            <span class="note-creatTime">{{item.cn_note_creatTime}}</span>
+            <span class="note-creatTime">{{item.cn_note_createTime | formatDate}}</span>
             <span class="note-content">
               {{item.cn_note_content}}
             </span>
@@ -44,11 +47,13 @@
         </li>
       </ul>
     </div>
+
     <div class="note-logo" v-else>
       <span class="fa fa-file-text-o logo"></span>
       <span>还没有笔记？</span>
       <span>赶快<i>点击左侧<i class="fa fa-plus"></i>号</i>添加吧</span>
     </div>
+
   </div>
 </template>
 
@@ -59,12 +64,14 @@
   import baseService from '../../../Service/baseService';
 
   export default {
+
     data() {
       return {
         name: "note",
         message: '',
         userId: '',
-        noteId: ''
+        noteId: '',
+        list: '',
       };
     },
 
@@ -78,9 +85,7 @@
       }
     },
 
-    watch: {
-
-    },
+    watch: {},
 
     methods: {
       onCopy() {
@@ -112,17 +117,67 @@
         this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
       },
       deleteNote(noteId, noteTypeId) {
-        noteService.deleteNote(noteId,noteTypeId);
+        noteService.deleteNote(noteId, noteTypeId);
       },
       StoreNote(noteId, noteTypeId) {
         noteService.StoreNote(noteId, noteTypeId);
       },
       skim(value) {
         this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+      },
+
+      handleCommand(command) {
+        //创建时间（最早优先）
+        if (command === 'a') {
+          this.list = store.state.main.noteList;
+          this.list.sort(this.compare('cn_note_createTime', 1));
+          store.commit("noteList",this.list);
+          //创建时间（最新优先）
+        } else if (command === 'b') {
+          this.list = store.state.main.noteList;
+          this.list.sort(this.compare('cn_note_createTime', -1));
+          store.commit("noteList",this.list);
+          //更新时间（最早优先）
+        } else if (command === 'c') {
+          this.list = store.state.main.noteList;
+          this.list.sort(this.compare('cn_note_updateTime', 1));
+          store.commit("noteList",this.list);
+
+          //更新时间（最新优先）
+        } else {
+          baseService.getNoteList();
+        }
+      },
+
+      compare(pro, rev) {
+        if (rev) {
+          rev = rev > 0 ? 1 : -1;
+        } else {
+          rev = 1;
+        }
+        return function (a, b) {
+          let time1 = Math.round((new Date(a[pro]).getTime())/1000);
+          let time2 = Math.round((new Date(b[pro]).getTime())/1000);
+          if (time1 - time2 > 0) {
+            return rev * 1;
+          }
+          if (time1 - time2 < 0) {
+            return rev * -1;
+          }
+          return 0;
+        }
       }
+
 
     },
 
+    filters: {
+      formatDate(value) {
+        if (!value) return '';
+        value = value.toString();
+        return value.split(" ")[0];
+      }
+    }
 
 
   };
@@ -195,9 +250,10 @@
           .note-detail-right
             float: right
             height: 100px;
-            width: 10px;
+            width: 15px;
             padding-top: 20px;
             opacity: 0
+            text-align :center;
           &:hover .note-detail-right
             opacity: 1
             transition: all .5s

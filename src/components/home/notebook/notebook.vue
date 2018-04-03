@@ -1,18 +1,21 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
 
   <div class="notebook" v-if="flag">
+
     <div class="top">
       <span class="text">笔记本</span>
       <span class="fa fa-plus plus" title="创建笔记本" @click="newNoteBook"></span>
     </div>
+
     <div class="search-box">
       <input type="text" class="" name="search-text" placeholder="查找笔记本" v-model="searchText"/>
     </div>
+
     <div class="notebook-list" v-if="noteBookList.length !== 0">
       <ul>
         <li class="notebook-detail" v-bind="noteBookList" v-for="item in noteBookList"
-            v-if="item.cn_notebook_type_id != 4" @click="openNoteBook(item.noteList,item.cn_notebook_name,item.noteCount)">
-          <div class="detail-left">
+            >
+          <div class="detail-left"  @click="openNoteBook(item.noteList,item.cn_notebook_name,item.noteCount)">
             <span>{{item.cn_notebook_name}}</span>
             <span>{{item.noteCount}}条记录</span>
           </div>
@@ -29,28 +32,33 @@
 
       </ul>
     </div>
+
     <div class="notebook-logo" v-else>
       <span class="fa fa-book logo"></span>
       <span>还没有笔记本？</span>
       <span>赶快<i>点击<i class="fa fa-plus"></i>号</i>添加吧</span>
     </div>
+
   </div>
 
   <div class="second" v-else>
 
     <div class="second-top">
+
        <span class="fa fa-hand-o-left return" @click="closeNoteBook">
           返回笔记本
        </span>
+
        <div class="second-bookname">
           <span class="fa fa-book fabook">
           </span>
          <span class="fatext">{{title}}</span>
        </div>
+
        <div class="second-selectbar">
           <span>{{count}}条记录</span>
          <div class="select">
-           <el-dropdown>
+           <el-dropdown trigger="click">
           <span class="el-dropdown-link">
             选项<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -63,6 +71,7 @@
            </el-dropdown>
          </div>
        </div>
+
     </div>
 
     <div class="second-noteList" v-if="noteList.length !== 0">
@@ -70,7 +79,7 @@
         <li v-for="item in noteList" v-if="item.cn_note_type_id !== 4">
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
-            <span class="note-creatTime">{{item.cn_note_creatTime}}</span>
+            <span class="note-creatTime">{{item.cn_note_createTime | formatDate}}</span>
             <span class="note-content">
               {{item.cn_note_content}}
             </span>
@@ -89,11 +98,13 @@
         </li>
       </ul>
     </div>
+
     <div class="second-logo" v-else>
       <span class="fa fa-file-text-o logo"></span>
       <span>还没有笔记？</span>
       <span>赶快<i>点击左侧<i class="fa fa-plus"></i>号</i>添加吧</span>
     </div>
+
   </div>
 
 </template>
@@ -136,8 +147,6 @@
           }).then((res) => {
             if (res.data.status === 0) {
               store.commit("noteBookList",baseService.getNoteBookList());
-              // this.noteBookList = res.data.data;
-              // console.log(res);
             }
           });
         } else {
@@ -147,9 +156,7 @@
           }).then((res) => {
             if (res.data.status === 0) {
               store.commit("noteBookList",res.data.data);
-              // this.noteBookList = res.data.data;
-              // console.log(res);
-            }
+          }
           });
         }
 
@@ -175,14 +182,18 @@
       },
 
       openNoteBook(noteList,title,count) {
-        this.flag = false;
-        this.count = count;
-        this.title = title;
-        this.noteList = noteList;
+        setTimeout(_ =>{
+          this.flag = false;
+          this.count = count;
+          this.title = title;
+          this.noteList = noteList;
+        },300);
       },
 
       closeNoteBook(){
-        this.flag = true;
+        setTimeout(_ =>{
+          this.flag = true;
+        },300);
       },
 
       onCopy() {
@@ -229,6 +240,14 @@
 
       baseService.getNoteBookList();
 
+    },
+
+    filters: {
+      formatDate(value) {
+        if (!value) return '';
+        value = value.toString();
+        return value.split(" ")[0];
+      }
     }
 
   };
@@ -340,6 +359,8 @@
         display: inline-block
         text-indent: 10px;
 
+
+
   .second
     .second-top
        width :400px;
@@ -427,9 +448,10 @@
           .note-detail-right
             float: right
             height: 100px;
-            width: 10px;
+            width: 15px;
             padding-top: 20px;
-            opacity: 0
+            opacity: 0;
+            text-align :center;
           &:hover .note-detail-right
             opacity: 1
             transition: all .5s

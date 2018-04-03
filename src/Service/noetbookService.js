@@ -76,6 +76,7 @@ const noteBookService = {
                   store.commit("noteBookTrashList", baseService.findNoteBookInTrash());
                   store.commit("noteBookStoreList", baseService.findNoteBookInStore());
                   store.commit("noteStoreList", baseService.findNoteInStore());
+                  store.commit("tagList",baseService.getTagList());
                   resolve(res.data.data);
                 });
               } else {

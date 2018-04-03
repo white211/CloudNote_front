@@ -2,27 +2,34 @@
   <div id="editor">
     <div id="bar">
       <div class="com">
-        <span class="fa fa-file-text"></span>
-        <select class="notebook" v-model="noteBookId">
-          <option value="0">笔记本</option>
-          <option v-for="item in noteBookList"
-                  v-bind:value="item.cn_notebook_id"
-                  v-if="item.cn_notebook_type_id !== 4">{{item.cn_notebook_name}}
-          </option>
-        </select>
+        <span class="fa fa-book"></span>
+        <el-select v-model="noteBookId" placeholder="笔记本"
+                   size="mini" class="select">
+          <el-option
+            v-for="item in noteBookList"
+            :key="item.cn_notebook_id"
+            :label="item.cn_notebook_name"
+            :value="item.cn_notebook_id">
+          </el-option>
+        </el-select>
       </div>
       <div class="com">
         <span class="fa fa-tags"></span>
-        <select class="tags" v-model="noteLabelId">
-          <option value="0">标签</option>
-          <option v-for="item in labelList" v-bind:value="item.cn_label_id">{{item.cn_label_name}}</option>
-        </select>
+        <el-select v-model="noteLabelId" placeholder="标签"
+                   size="mini" class="select">
+          <el-option
+            v-for="item in labelList"
+            :key="item.cn_label_id"
+            :label="item.cn_label_name"
+            :value="item.cn_label_id">
+          </el-option>
+        </el-select>
       </div>
       <div class="com">
         <input type="text" placeholder="写下笔记标题" class="title" v-model="noteTitle"/>
       </div>
       <div class="com" style="float:right;">
-        <input type="button" id="saveNote" class="saveBtn" value="保存" @click="newNote"/>
+        <el-button type="success" plain @click="newNote" class="saveBtn">保存</el-button>
       </div>
     </div>
     <mavon-editor style="height: 100%" v-model="noteContent" ref=md @imgAdd="imgAdd"></mavon-editor>
@@ -42,8 +49,8 @@
     data() {
       return {
         name: "editor",
-        noteLabelId: 0,
-        noteBookId: 0,
+        noteLabelId: '',
+        noteBookId: '',
         noteTitle: '',
         noteDesc: '',
         noteContent: '',
@@ -66,7 +73,10 @@
         }).then((res) => {
           if (res.data.status === 0) {
             swal('已保存', '', 'success').then(value => {
-              this.$router.go(0);
+              baseService.getNoteBookList();
+              baseService.getNoteList();
+              baseService.getTagList();
+              this.resetData();
             });
           } else {
             swal(res.data.msg);
@@ -82,16 +92,25 @@
           url: 'http://127.0.0.1:8080/note/uploadFile.do',
           method: 'post',
           data: formdata,
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: {'Content-Type': 'multipart/form-data'},
         }).then((res) => {
-           var url = res.data.data;
+          var url = res.data.data;
           this.$refs.md.$img2Url(pos, url);
-        })
+        });
       },
+
+      resetData() {
+        this.noteLabelId = '';
+        this.noteBookId = '';
+        this.noteTitle = '';
+        this.noteDesc = '';
+        this.noteContent = '';
+      }
 
     },
 
     mounted() {
+
       if (this.activeNoteId) {
         api.post('/note/findNoteById.do', {
           noteId: this.activeNoteId
@@ -111,9 +130,12 @@
     },
 
     computed: {
+
       activeNote() {
         if (this.$route.params.id != null) {
           return this.$route.params.id;
+        } else {
+          this.resetData();
         }
       },
 
@@ -121,14 +143,13 @@
         return this.$route.params.id;
       },
 
-      noteBookList(){
+      noteBookList() {
         return store.state.main.noteBookList;
       },
 
-      labelList(){
+      labelList() {
         return store.state.main.tagList;
       }
-
 
     },
 
@@ -164,8 +185,12 @@
       .com
         float: left
         margin-right: 10px;
-        select
+        .select
           width: 100px;
+        .saveBtn
+          width: 100px;
+          font-size: 16px;
+          text-align: center
         #saveNote
           height: 35px;
           width: 70px;
@@ -185,6 +210,7 @@
         outline: none;
         font-size: 25px;
         color: #3FB618;
+        padding-left: 5px;
         &::-webkit-input-placeholder
           font-size: 15px;
           color: #687b7c;

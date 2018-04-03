@@ -443,6 +443,7 @@
       top: 10px
       bottom: 0px
       background-color: white
+      /*border :1px solid black;*/
       #bar
         margin: 0 auto;
         height: 55px;

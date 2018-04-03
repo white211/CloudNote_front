@@ -4,6 +4,7 @@ import baseService from "./baseService";
 
 const tagService = {
 
+  //新建标签
   newLabel() {
     swal({
       title: "新建标签",
@@ -41,6 +42,7 @@ const tagService = {
       });
   },
 
+  //删除标签
   deleteLabel(id) {
      return new Promise((resolve=()=>{},reject=()=>{})=>{
        swal({
@@ -57,7 +59,7 @@ const tagService = {
                labelId: id,
              }).then((res) => {
                if (res.data.status === 0) {
-                 swal("已经被删除，可到回收站找回", {
+                 swal("该标签已经被删除", {
                    icon: "success",
                    timer: 3000
                  }).then(value => {
@@ -78,6 +80,7 @@ const tagService = {
      })
   },
 
+  //重命名标签
   resetName(id, val){
      return new Promise((resolve =() =>{},reject=()=>{} )=>{
        swal({

@@ -30,11 +30,14 @@ import clipboard from 'vue-clipboard2';
 import ElementUI  from 'element-ui';
 import  'element-ui/lib/theme-chalk/index.css';
 
+import vueEventCalendar from 'vue-event-calendar';
+import "vue-event-calendar/dist/style.css"
 
 // use
 Vue.use(mavonEditor);
 Vue.use(clipboard);
 Vue.use(ElementUI );
+Vue.use(vueEventCalendar, {locale: 'en'});
 
 Vue.config.productionTip = false;
 

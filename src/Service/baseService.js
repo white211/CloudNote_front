@@ -143,7 +143,19 @@ const baseService = {
     });
   },
 
-
+  getWeather(city){
+    return new Promise((resolve=() =>{},reject=()=>{})=>{
+       api.post('/user/getWeather.do',{
+         city:city
+       }).then((res)=>{
+         if(res.data.status === 0){
+            resolve(res.data.data.results[0]);
+         }else{
+           reject(res);
+         }
+       })
+    })
+  }
 
 };
 

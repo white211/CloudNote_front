@@ -33,9 +33,9 @@
     data() {
       return {
         name: "updatePass",
-        oldPass: null,
-        newPass: null,
-        checkPass: null,
+        oldPass: [],
+        newPass: [],
+        checkPass: [],
         flag: false
       };
     },
@@ -75,6 +75,8 @@
             text: '新密码不能与旧密码相同',
             timer: 3000,
             icon: 'error'
+          }).then((res)=>{
+            this.newPass = [];
           });
         }
         if (this.newPass.length < 6 || this.newPass.length > 20) {
@@ -88,8 +90,7 @@
       },
 
       CheckCheckPass() {
-
-        if (this.checkPass !== this.newPass && this.checkPass !== null) {
+        if (this.checkPass === this.newPass && this.checkPass !== null && this.newPass !==null) {
           swal({
             title: '',
             text: '两次密码不一致',
@@ -100,7 +101,7 @@
       },
 
       changPass() {
-        if (this.oldPass === null || this.newPass === null || this.checkPass === null) {
+        if (this.oldPass.length === 0 || this.newPass.length === 0 || this.checkPass.length === 0) {
           swal({
             title: '提交失败',
             text: '',
@@ -123,7 +124,6 @@
                 store.commit('user', null);
                 this.$router.push('/login');
               });
-
             }
           });
         }
@@ -165,6 +165,7 @@
         border: 1px solid #dce4ec
         border-radius: 5px;
         font-size: 25px
+        padding-left :10px;
         &:focus
           border-radius: 5px;
       input[type=button]
