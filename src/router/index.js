@@ -8,8 +8,8 @@ import Home from '../components/home/index';
 import Activate from '../components/activate';
 import Editor from '../components/home/editor';
 import UpdatePass from '../components/home/user/updatePass';
-import UserInfo from '../components/home/user/userInfo'
-import Msg from '../components/home/user/msg'
+import UserInfo from '../components/home/user/userInfo';
+import Msg from '../components/home/user/msg';
 import ShareNote from '../components/home/note/shareNote';
 
 Vue.use(Router);
@@ -36,7 +36,7 @@ export default new Router({
     {
       path: '/home',
       component: Home,
-      redirect:'/home/newNote',
+      redirect: '/home/newNote',
       children: [
         {
           path: 'newNote',
@@ -47,16 +47,16 @@ export default new Router({
           component: Editor,
         },
         {
-          path:'/user/userInfo',
-          component:UserInfo
+          path: '/user/userInfo',
+          component: UserInfo
         },
         {
-          path:'/user/updatePass',
-          component:UpdatePass
+          path: '/user/updatePass',
+          component: UpdatePass
         },
         {
-          path:'/user/msg',
-          component:Msg
+          path: '/user/msg',
+          component: Msg
         },
 
       ]
@@ -69,9 +69,9 @@ export default new Router({
     },
 
     {
-      path:'/note/shareNote/:userId/:id',
-      name:'shareNote',
-      component:ShareNote
+      path: '/note/shareNote/:userId/:id',
+      name: 'shareNote',
+      component: ShareNote
     }
 
   ]

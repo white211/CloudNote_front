@@ -47,7 +47,7 @@
     data() {
       return {
         account: '942364283@qq.com',
-        password: '123456',
+        password: '654321',
       };
     },
     methods: {
@@ -84,6 +84,7 @@
       margin-left: -300px;
       margin-top: -250px;
       box-shadow: 0px 2px 8px 1px rgba(0, 0, 0, 0.2);
+      user-select none;
       padding-top: 50px;
       .input
         width: 500px;
@@ -108,9 +109,9 @@
         #register_btn
           margin-right: 20px;
     #bottom
-      position :absolute;
-      bottom :0;
-      width :100%;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
       min-width: 660px;
       max-width: 1800px;
       height: 80px;

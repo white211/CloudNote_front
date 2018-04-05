@@ -12,7 +12,8 @@
       <ul>
         <li v-for="item in labelList">
           <div class="tagAll">
-            <div class="tag-name" @click="openTag(item.cn_label_name,item.noteCount,item.noteList)">{{item.cn_label_name}}<span class="number">{{item.noteCount}}</span></div>
+            <div class="tag-name" @click="openTag(item.cn_label_id,item.cn_label_name)">
+              {{item.cn_label_name}}<span class="number">{{item.noteCount}}</span></div>
             <div class="crud">
               <span class="fa fa-pencil-square-o" title="重命名"
                     @click="resetName(item.cn_label_id,item.cn_label_name)"></span>
@@ -43,17 +44,17 @@
       </div>
 
       <div class="second-selectbar">
-        <span>{{count}}条记录</span>
+        <span>{{noteListInTag.length}}条记录</span>
         <div class="select">
-          <el-dropdown trigger="click">
+          <el-dropdown trigger="click" @command="handleCommand">
           <span class="el-dropdown-link">
             选项<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>创建日期（最早优先）</el-dropdown-item>
-              <el-dropdown-item>创建日期（最新优先）</el-dropdown-item>
-              <el-dropdown-item>更新日期（最早优先）</el-dropdown-item>
-              <el-dropdown-item>更新日期（最新优先）</el-dropdown-item>
+              <el-dropdown-item command="a">创建日期（最早优先）</el-dropdown-item>
+              <el-dropdown-item command="b">创建日期（最新优先）</el-dropdown-item>
+              <el-dropdown-item command="c">更新日期（最早优先）</el-dropdown-item>
+              <el-dropdown-item command="d">更新日期（最新优先）</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -61,9 +62,9 @@
 
     </div>
 
-    <div class="second-noteList" v-if="noteList.length !== 0">
+    <div class="second-noteList" v-if="noteListInTag.length !== 0">
       <ul>
-        <li v-for="item in noteList" v-if="item.cn_note_type_id !== 4">
+        <li v-for="item in noteListInTag" v-if="item.cn_note_type_id !== 4">
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
             <span class="note-creatTime">{{item.cn_note_createTime | formatDate}}</span>
@@ -101,6 +102,7 @@
   import store from '../../../store';
   import baseService from '../../../Service/baseService';
   import tagService from '../../../Service/tagService';
+  import noteService from '../../../Service/noteService';
 
   export default {
 
@@ -110,9 +112,9 @@
         searchText: '',
         flag: true,
         message: '',
-        name:'',
-        count:'',
-        noteList:[]
+        name: '',
+        noteList: [],
+        index: ''
       };
     },
 
@@ -120,6 +122,10 @@
       labelList() {
         return store.state.main.tagList;
       },
+      noteListInTag(){
+        return store.state.noteListInTag;
+      }
+
     },
 
     mounted() {
@@ -142,20 +148,22 @@
         tagService.resetName(id, val);
       },
 
-      openTag(name,count,noteList){
-        setTimeout(_ =>{
-          this.name = name;
-          this.count = count;
-          this.flag=false;
-          this.noteList = noteList;
-        },300);
+      openTag(id, name) {
+        this.index = id;
+        this.name = name;
+        setTimeout(_ => {
+          this.flag = false;
+          tagService.findNoteByNoteTagId(id);
+        }, 300);
 
       },
 
-      closeTag(){
-        setTimeout(_ =>{
-          this.flag =true;
-        },300);
+      closeTag() {
+        setTimeout(_ => {
+          this.flag = true;
+          this.index='';
+          this.name='';
+        }, 300);
       },
 
       onCopy() {
@@ -187,13 +195,61 @@
         this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
       },
       deleteNote(noteId, noteTypeId) {
-        noteService.deleteNote(noteId, noteTypeId);
+        noteService.deleteNote(noteId, noteTypeId).then((res)=>{
+          tagService.findNoteByNoteTagId(this.index);
+        });
       },
       StoreNote(noteId, noteTypeId) {
-        noteService.StoreNote(noteId, noteTypeId);
+        noteService.StoreNote(noteId, noteTypeId).then((res)=>{
+          tagService.findNoteByNoteTagId(this.index);
+        });
       },
       skim(value) {
         this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+      },
+
+      handleCommand(command) {
+        //创建时间（最早优先）
+        if (command === 'a') {
+          this.noteList = store.state.noteListInTag;
+          this.noteList.sort(this.compare('cn_note_createTime', 1));
+          store.commit("noteListInTag", this.noteList);
+          //创建时间（最新优先）
+        } else if (command === 'b') {
+          this.noteList = store.state.noteListInTag;
+          this.noteList.sort(this.compare('cn_note_createTime', -1));
+          store.commit("noteListInTag",  this.noteList);
+          //更新时间（最早优先）
+        } else if (command === 'c') {
+          this.noteList = store.state.noteListInTag;
+          this.noteList.sort(this.compare('cn_note_updateTime', -1));
+          store.commit("noteListInTag",  this.noteList);
+
+          //更新时间（最新优先）
+        } else {
+          this.noteList = store.state.noteListInTag;
+          this.noteList.sort(this.compare('cn_note_updateTime', 1));
+          store.commit("noteListInTag",  this.noteList);
+        }
+      },
+
+      compare(pro, rev) {
+        if (rev) {
+          rev = rev > 0 ? 1 : -1;
+        } else {
+          rev = 1;
+        }
+        return function (a, b) {
+          let time1 = Math.round((new Date(a[pro]).getTime()) / 1000);
+          let time2 = Math.round((new Date(b[pro]).getTime()) / 1000);
+          if (time1 - time2 > 0) {
+            return rev * 1;
+          }
+          if (time1 - time2 < 0) {
+            return rev * -1;
+          }
+          return 0;
+        };
       }
     },
 
@@ -262,6 +318,7 @@
         border-radius: 3px
         font-size: 20px
         box-shadow: 0 0 8px -2px grey inset
+        padding-left :8px;
         &::-webkit-input-placeholder
           font-size: 15px;
           color: #687b7c;
@@ -351,6 +408,8 @@
             transition: opacity .8s
 
   .second
+    display: flex
+    flex-direction: column
     .second-top
       width: 400px;
       height: 180px;
@@ -430,7 +489,7 @@
             float: right
             height: 100px;
             width: 15px;
-            text-align :center;
+            text-align: center;
             padding-top: 20px;
             opacity: 0
           &:hover .note-detail-right
@@ -456,8 +515,6 @@
         line-height: 20px;
         display: inline-block
         text-indent: 10px;
-
-
 
 
 </style>

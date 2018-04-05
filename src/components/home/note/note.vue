@@ -55,6 +55,7 @@
     </div>
 
   </div>
+
 </template>
 
 <script>
@@ -88,6 +89,7 @@
     watch: {},
 
     methods: {
+
       onCopy() {
         swal({
           title: '',
@@ -131,18 +133,17 @@
         if (command === 'a') {
           this.list = store.state.main.noteList;
           this.list.sort(this.compare('cn_note_createTime', 1));
-          store.commit("noteList",this.list);
+          store.commit("noteList", this.list);
           //创建时间（最新优先）
         } else if (command === 'b') {
           this.list = store.state.main.noteList;
           this.list.sort(this.compare('cn_note_createTime', -1));
-          store.commit("noteList",this.list);
+          store.commit("noteList", this.list);
           //更新时间（最早优先）
         } else if (command === 'c') {
           this.list = store.state.main.noteList;
           this.list.sort(this.compare('cn_note_updateTime', 1));
-          store.commit("noteList",this.list);
-
+          store.commit("noteList", this.list);
           //更新时间（最新优先）
         } else {
           baseService.getNoteList();
@@ -156,8 +157,8 @@
           rev = 1;
         }
         return function (a, b) {
-          let time1 = Math.round((new Date(a[pro]).getTime())/1000);
-          let time2 = Math.round((new Date(b[pro]).getTime())/1000);
+          let time1 = Math.round((new Date(a[pro]).getTime()) / 1000);
+          let time2 = Math.round((new Date(b[pro]).getTime()) / 1000);
           if (time1 - time2 > 0) {
             return rev * 1;
           }
@@ -165,9 +166,8 @@
             return rev * -1;
           }
           return 0;
-        }
+        };
       }
-
 
     },
 
@@ -253,7 +253,7 @@
             width: 15px;
             padding-top: 20px;
             opacity: 0
-            text-align :center;
+            text-align: center;
           &:hover .note-detail-right
             opacity: 1
             transition: all .5s

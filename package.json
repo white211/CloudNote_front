@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^3.3.7",
+    "china-area-data": "^4.0.0",
+    "element-china-area-data": "^4.0.0",
     "element-ui": "^2.2.2",
     "font-awesome": "^4.7.0",
     "http": "^0.0.0",
@@ -28,6 +30,7 @@
     "stylus-loader": "^2.5.1",
     "sweetalert": "^2.1.0",
     "vue": "^2.5.2",
+    "vue-area-linkage": "^3.0.1",
     "vue-clipboard2": "^0.1.0",
     "vue-event-calendar": "^1.5.2",
     "vue-router": "^3.0.1",

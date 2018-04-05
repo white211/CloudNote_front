@@ -2,11 +2,13 @@
 // Bootswatch
 // -----------------------------------------------------
 @import "variables";
+
 @web-font-path: "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700";
 
 .web-font(@path) {
   @import url("@{path}");
 }
+
 .web-font(@web-font-path);
 
 // Effects =================================================================
@@ -41,7 +43,7 @@
 
 .navbar {
   border: none;
-  .box-shadow(0 1px 2px rgba(0,0,0,.3));
+  .box-shadow(0 1px 2px rgba(0, 0, 0, .3));
 
   &-brand {
     font-size: 24px;
@@ -78,25 +80,25 @@
     }
 
     &:active {
-      .box-shadow(2px 2px 4px rgba(0,0,0,.4));
+      .box-shadow(2px 2px 4px rgba(0, 0, 0, .4));
     }
 
     .ripple(@color);
   }
 }
 
-#btn(default,@btn-default-bg,@btn-default-color);
-#btn(primary,@btn-primary-bg,@btn-primary-color);
-#btn(success,@btn-success-bg,@btn-success-color);
-#btn(info,@btn-info-bg,@btn-info-color);
-#btn(warning,@btn-warning-bg,@btn-warning-color);
-#btn(danger,@btn-danger-bg,@btn-danger-color);
-#btn(link,#fff,@btn-default-color);
+#btn(default, @btn-default-bg, @btn-default-color);
+#btn(primary, @btn-primary-bg, @btn-primary-color);
+#btn(success, @btn-success-bg, @btn-success-color);
+#btn(info, @btn-info-bg, @btn-info-color);
+#btn(warning, @btn-warning-bg, @btn-warning-color);
+#btn(danger, @btn-danger-bg, @btn-danger-color);
+#btn(link, #fff, @btn-default-color);
 
 .btn {
   text-transform: uppercase;
   border: none;
-  .box-shadow(1px 1px 4px rgba(0,0,0,.4));
+  .box-shadow(1px 1px 4px rgba(0, 0, 0, .4));
   .transition(all 0.4s);
 
   &-link {
@@ -241,7 +243,7 @@ select.form-control {
   -moz-appearance: none;
   appearance: none;
   padding-left: 0;
-  padding-right: 0\9; // remove padding for < ie9 since default arrow can't be removed
+  padding-right: 0 \9; // remove padding for < ie9 since default arrow can't be removed
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAJ1BMVEVmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmaP/QSjAAAADHRSTlMAAgMJC0uWpKa6wMxMdjkoAAAANUlEQVR4AeXJyQEAERAAsNl7Hf3X6xt0QL6JpZWq30pdvdadme+0PMdzvHm8YThHcT1H7K0BtOMDniZhWOgAAAAASUVORK5CYII=);
   background-size: 13px;
   background-repeat: no-repeat;
@@ -516,7 +518,7 @@ input[type="checkbox"],
 .dropdown-menu {
   margin-top: 0;
   border: none;
-  .box-shadow(0 1px 4px rgba(0,0,0,.3));
+  .box-shadow(0 1px 4px rgba(0, 0, 0, .3));
 }
 
 // Indicators =================================================================
@@ -637,7 +639,7 @@ input[type="checkbox"],
 .panel {
   border: none;
   border-radius: 2px;
-  .box-shadow(0 1px 4px rgba(0,0,0,.3));
+  .box-shadow(0 1px 4px rgba(0, 0, 0, .3));
 
   &-heading {
     border-bottom: none;
@@ -650,7 +652,7 @@ input[type="checkbox"],
 
 .popover {
   border: none;
-  .box-shadow(0 1px 4px rgba(0,0,0,.3));
+  .box-shadow(0 1px 4px rgba(0, 0, 0, .3));
 }
 
 .carousel {

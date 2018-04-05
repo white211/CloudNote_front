@@ -5,7 +5,7 @@ import baseService from './baseService';
 const noteService = {
 
   //删除笔记
-  deleteNote(noteId, noteTypeId){
+  deleteNote(noteId, noteTypeId) {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -27,13 +27,13 @@ const noteService = {
                   icon: "success",
                   timer: 3000
                 }).then(value => {
-                  store.commit("tagList",baseService.getTagList());
-                  store.commit("noteList",baseService.getNoteList());
-                  store.commit("noteBookList",baseService.getNoteBookList());
-                  store.commit("noteTrashList",baseService.findNoteInTrash());
-                  store.commit("noteBookTrashList",baseService.findNoteBookInTrash());
-                  store.commit("noteStoreList",baseService.findNoteInStore());
-                  store.commit("noteBookStoreList",baseService.findNoteBookInStore());
+                  store.commit("tagList", baseService.getTagList());
+                  store.commit("noteList", baseService.getNoteList());
+                  store.commit("noteBookList", baseService.getNoteBookList());
+                  store.commit("noteTrashList", baseService.findNoteInTrash());
+                  store.commit("noteBookTrashList", baseService.findNoteBookInTrash());
+                  store.commit("noteStoreList", baseService.findNoteInStore());
+                  store.commit("noteBookStoreList", baseService.findNoteBookInStore());
                   resolve(res.data.data);
                 });
               } else {
@@ -55,7 +55,7 @@ const noteService = {
   },
 
   //收藏笔记
-  StoreNote(noteId, noteTypeId){
+  StoreNote(noteId, noteTypeId) {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -70,9 +70,9 @@ const noteService = {
               timer: 3000,
               icon: 'success'
             }).then(value => {
-              store.commit("noteStoreList",baseService.findNoteInStore());
-              store.commit("noteList",baseService.getNoteList());
-               resolve(res.data.data);
+              store.commit("noteStoreList", baseService.findNoteInStore());
+              store.commit("noteList", baseService.getNoteList());
+              resolve(res.data.data);
             });
           } else {
             swal({
@@ -88,8 +88,8 @@ const noteService = {
               timer: 3000,
               icon: 'success'
             }).then(value => {
-              store.commit("noteStoreList",baseService.findNoteInStore());
-              store.commit("noteList",baseService.getNoteList());
+              store.commit("noteStoreList", baseService.findNoteInStore());
+              store.commit("noteList", baseService.getNoteList());
               resolve(res.data.data);
             });
           } else {
@@ -103,29 +103,31 @@ const noteService = {
       });
     });
 
-   },
+  },
 
   //通过相似笔记标题和笔记内容查找相应笔记本中的内容
-  SearchText(val,Id){
-     return new Promise((resolve=() =>{},reject=()=>{} )=>{
-       if(val && Id){
-         api.post('/note/findNoteByTitleOrContent.do',{
-           searchText:val,
-           noteBookId:Id,
-           userId:store.state.user.cn_user_id
-         }).then((res)=>{
-           if(res.data.status === 0){
-             console.log(res);
-             resolve(res.data.data);
-           }else{
-             reject(res);
-           }
-         }).catch((error) => {
-           if (error.response) reject(error.response.data);
-         });
-       }
+  SearchText(val, Id) {
+    return new Promise((resolve = () => {
+    }, reject = () => {
+    }) => {
+      if (val && Id) {
+        api.post('/note/findNoteByTitleOrContent.do', {
+          searchText: val,
+          noteBookId: Id,
+          userId: store.state.user.cn_user_id
+        }).then((res) => {
+          if (res.data.status === 0) {
+            console.log(res);
+            resolve(res.data.data);
+          } else {
+            reject(res);
+          }
+        }).catch((error) => {
+          if (error.response) reject(error.response.data);
+        });
+      }
 
-     });
+    });
   }
 
 

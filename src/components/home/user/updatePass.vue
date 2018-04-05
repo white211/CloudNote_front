@@ -40,6 +40,7 @@
       };
     },
     methods: {
+
       checkOldPass() {
         if (this.oldPass.length === 0) {
           swal({
@@ -75,7 +76,7 @@
             text: '新密码不能与旧密码相同',
             timer: 3000,
             icon: 'error'
-          }).then((res)=>{
+          }).then((res) => {
             this.newPass = [];
           });
         }
@@ -90,7 +91,7 @@
       },
 
       CheckCheckPass() {
-        if (this.checkPass === this.newPass && this.checkPass !== null && this.newPass !==null) {
+        if (this.checkPass !== this.newPass && this.checkPass !== null && this.newPass !== null) {
           swal({
             title: '',
             text: '两次密码不一致',
@@ -158,6 +159,7 @@
       label
         width: 100px;
         text-align: right
+        user-select :none;
       input[type=password]
         width: 600px;
         height: 50px;
@@ -165,7 +167,7 @@
         border: 1px solid #dce4ec
         border-radius: 5px;
         font-size: 25px
-        padding-left :10px;
+        padding-left: 10px;
         &:focus
           border-radius: 5px;
       input[type=button]

@@ -5,7 +5,7 @@ import baseService from "./baseService";
 const storeService = {
 
   //取消收藏
-  Cancel(id, type){
+  Cancel(id, type) {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -20,9 +20,9 @@ const storeService = {
               title: '',
               text: '已取消快捷方式',
               icon: 'success'
-            }).then((res)=>{
-              store.commit("noteStoreList",baseService.findNoteInStore());
-              store.commit("noteList",baseService.getNoteList());
+            }).then((res) => {
+              store.commit("noteStoreList", baseService.findNoteInStore());
+              store.commit("noteList", baseService.getNoteList());
               resolve(res.data.data);
             }).catch((error) => {
               if (error.response) reject(error.response.data);
@@ -31,9 +31,9 @@ const storeService = {
         });
       } else if (type === 2) {
         api.post('/notebook/setNoteBookType.do', {
-          userId:store.state.user.cn_user_id,
-          noteBookId:id,
-          noteBookType:1
+          userId: store.state.user.cn_user_id,
+          noteBookId: id,
+          noteBookType: 1
         }).then((res) => {
           console.log(res);
           if (res.data.status === 0) {
@@ -41,9 +41,9 @@ const storeService = {
               title: '',
               text: '已取消快捷方式',
               icon: 'success'
-            }).then((res)=>{
-              store.commit("noteBookStoreList",baseService.findNoteBookInStore());
-              store.commit("noteBookList",baseService.getNoteBookList());
+            }).then((res) => {
+              store.commit("noteBookStoreList", baseService.findNoteBookInStore());
+              store.commit("noteBookList", baseService.getNoteBookList());
               resolve(res.data.data);
             }).catch((error) => {
               if (error.response) reject(error.response.data);

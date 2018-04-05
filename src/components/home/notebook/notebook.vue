@@ -13,9 +13,9 @@
 
     <div class="notebook-list" v-if="noteBookList.length !== 0">
       <ul>
-        <li class="notebook-detail" v-bind="noteBookList" v-for="item in noteBookList"
-            >
-          <div class="detail-left"  @click="openNoteBook(item.noteList,item.cn_notebook_name,item.noteCount)">
+        <li class="notebook-detail" v-bind="noteBookList" v-for="(item,index) in noteBookList"
+        >
+          <div class="detail-left" @click="openNoteBook(item.cn_notebook_id,item.cn_notebook_name)">
             <span>{{item.cn_notebook_name}}</span>
             <span>{{item.noteCount}}条记录</span>
           </div>
@@ -49,34 +49,34 @@
           返回笔记本
        </span>
 
-       <div class="second-bookname">
+      <div class="second-bookname">
           <span class="fa fa-book fabook">
           </span>
-         <span class="fatext">{{title}}</span>
-       </div>
+        <span class="fatext">{{second.title}}</span>
+      </div>
 
-       <div class="second-selectbar">
-          <span>{{count}}条记录</span>
-         <div class="select">
-           <el-dropdown trigger="click">
+      <div class="second-selectbar">
+        <span>{{noteListInBook.length}}条记录</span>
+        <div class="select">
+          <el-dropdown trigger="click"  @command="handleCommand">
           <span class="el-dropdown-link">
             选项<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
-             <el-dropdown-menu slot="dropdown">
-               <el-dropdown-item>创建日期（最早优先）</el-dropdown-item>
-               <el-dropdown-item>创建日期（最新优先）</el-dropdown-item>
-               <el-dropdown-item>更新日期（最早优先）</el-dropdown-item>
-               <el-dropdown-item>更新日期（最新优先）</el-dropdown-item>
-             </el-dropdown-menu>
-           </el-dropdown>
-         </div>
-       </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="a">创建日期（最早优先）</el-dropdown-item>
+              <el-dropdown-item command="b">创建日期（最新优先）</el-dropdown-item>
+              <el-dropdown-item command="c">更新日期（最早优先）</el-dropdown-item>
+              <el-dropdown-item command="d">更新日期（最新优先）</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+      </div>
 
     </div>
 
-    <div class="second-noteList" v-if="noteList.length !== 0">
+    <div class="second-noteList" v-if="noteListInBook.length !== 0">
       <ul>
-        <li v-for="item in noteList" v-if="item.cn_note_type_id !== 4">
+        <li v-for="item in noteListInBook" v-if="item.cn_note_type_id !== 4">
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
             <span class="note-creatTime">{{item.cn_note_createTime | formatDate}}</span>
@@ -124,19 +124,25 @@
         noteBookType: '',
         searchText: '',
         flag: true,
-        second:{
-          title:'',
-          count:'',
-          noteList:[]
+        second: {
+          title: '',
+          noteList: []
         },
-        message:'',
+        message: '',
+        index:''
       };
     },
 
     computed: {
+
       noteBookList() {
         return store.state.main.noteBookList;
-      }
+      },
+
+      noteListInBook(){
+          return store.state.noteListInBook;
+      },
+
     },
 
     watch: {
@@ -146,7 +152,7 @@
             userId: store.state.user.cn_user_id,
           }).then((res) => {
             if (res.data.status === 0) {
-              store.commit("noteBookList",baseService.getNoteBookList());
+              store.commit("noteBookList", baseService.getNoteBookList());
             }
           });
         } else {
@@ -155,8 +161,8 @@
             userId: store.state.user.cn_user_id,
           }).then((res) => {
             if (res.data.status === 0) {
-              store.commit("noteBookList",res.data.data);
-          }
+              store.commit("noteBookList", res.data.data);
+            }
           });
         }
 
@@ -181,19 +187,21 @@
         notebookService.Store(id, type);
       },
 
-      openNoteBook(noteList,title,count) {
-        setTimeout(_ =>{
+      openNoteBook(bookId,title) {
+        this.index = bookId;
+        setTimeout(_ => {
           this.flag = false;
-          this.count = count;
-          this.title = title;
-          this.noteList = noteList;
-        },300);
+          this.second.title = title;
+          notebookService.findNoteByNoteBookId(bookId);
+        }, 300);
       },
 
-      closeNoteBook(){
-        setTimeout(_ =>{
+      closeNoteBook() {
+        setTimeout(_ => {
           this.flag = true;
-        },300);
+          this.index='';
+          this.title='';
+        }, 300);
       },
 
       onCopy() {
@@ -225,13 +233,61 @@
         this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
       },
       deleteNote(noteId, noteTypeId) {
-        noteService.deleteNote(noteId,noteTypeId);
+        noteService.deleteNote(noteId, noteTypeId).then((res)=>{
+          notebookService.findNoteByNoteBookId(this.index);
+        });
       },
       StoreNote(noteId, noteTypeId) {
-        noteService.StoreNote(noteId, noteTypeId);
+        noteService.StoreNote(noteId, noteTypeId).then((res)=>{
+          notebookService.findNoteByNoteBookId(this.index);
+        });
       },
       skim(value) {
         this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+      },
+
+      handleCommand(command) {
+        //创建时间（最早优先）
+        if (command === 'a') {
+          this.second.list = store.state.noteListInBook;
+          this.second.list.sort(this.compare('cn_note_createTime', 1));
+          store.commit("noteListInBook", this.second.list);
+          //创建时间（最新优先）
+        } else if (command === 'b') {
+          this.second.list = store.state.noteListInBook;
+          this.second.list.sort(this.compare('cn_note_createTime', -1));
+          store.commit("noteListInBook", this.second.list);
+          //更新时间（最早优先）
+        } else if (command === 'c') {
+          this.second.list = store.state.noteListInBook;
+          this.second.list.sort(this.compare('cn_note_updateTime', -1));
+          store.commit("noteListInBook", this.second.list);
+
+          //更新时间（最新优先）
+        } else {
+          this.second.list = store.state.noteListInBook;
+          this.second.list.sort(this.compare('cn_note_updateTime', 1));
+          store.commit("noteListInBook", this.second.list);
+        }
+      },
+
+      compare(pro, rev) {
+        if (rev) {
+          rev = rev > 0 ? 1 : -1;
+        } else {
+          rev = 1;
+        }
+        return function (a, b) {
+          let time1 = Math.round((new Date(a[pro]).getTime()) / 1000);
+          let time2 = Math.round((new Date(b[pro]).getTime()) / 1000);
+          if (time1 - time2 > 0) {
+            return rev * 1;
+          }
+          if (time1 - time2 < 0) {
+            return rev * -1;
+          }
+          return 0;
+        };
       }
 
     },
@@ -283,6 +339,7 @@
         line-height: 40px
         border-radius: 3px
         font-size: 20px
+        padding-left :8px;
         box-shadow: 0 0 8px -2px grey inset
         &::-webkit-input-placeholder
           font-size: 15px;
@@ -359,54 +416,52 @@
         display: inline-block
         text-indent: 10px;
 
-
-
   .second
+    display: flex
+    flex-direction: column
     .second-top
-       width :400px;
-       height :200px;
-       border-bottom: 3px solid #dce4ec;
-       .return
-         width :400px;
-         height :50px;
-         line-height :50px;
-         display :block;
-         padding-left :10px;
-         padding-right :10px;
-         background-color :#595959;
-         color :white;
-         &:hover
-           cursor :pointer;
-       .second-bookname
-         display :block;
-         width :400px;
-         height:100px;
-         margin :0 auto;
-         text-align :center;
-         padding-top :15px;
-         background-color : #595959;
-         color :white;
-         .fabook
-           display :block;
-           font-size :25px;
-         .fatext
-           display :block;
-           font-size :15px;
-       .second-selectbar
-         display :block;
-         width :400px;
-         height:50px;
-         margin :0 auto;
-         padding-left :20px;
-         padding-right :20px;
-         line-height :50px;
-         span
-           display :inline-block;
-         .select
-           display :inline-block
-           float :right;
-
-
+      width: 400px;
+      height: 200px;
+      border-bottom: 3px solid #dce4ec;
+      .return
+        width: 400px;
+        height: 50px;
+        line-height: 50px;
+        display: block;
+        padding-left: 10px;
+        padding-right: 10px;
+        background-color: #595959;
+        color: white;
+        &:hover
+          cursor: pointer;
+      .second-bookname
+        display: block;
+        width: 400px;
+        height: 100px;
+        margin: 0 auto;
+        text-align: center;
+        padding-top: 15px;
+        background-color: #595959;
+        color: white;
+        .fabook
+          display: block;
+          font-size: 25px;
+        .fatext
+          display: block;
+          font-size: 15px;
+      .second-selectbar
+        display: block;
+        width: 400px;
+        height: 50px;
+        margin: 0 auto;
+        padding-left: 20px;
+        padding-right: 20px;
+        line-height: 50px;
+        span
+          display: inline-block;
+        .select
+          display: inline-block
+          float: right;
 
     .second-noteList
       overflow-y: scroll
@@ -451,7 +506,7 @@
             width: 15px;
             padding-top: 20px;
             opacity: 0;
-            text-align :center;
+            text-align: center;
           &:hover .note-detail-right
             opacity: 1
             transition: all .5s
@@ -475,9 +530,6 @@
         line-height: 20px;
         display: inline-block
         text-indent: 10px;
-
-
-
 
 
 </style>

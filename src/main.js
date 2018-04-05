@@ -27,16 +27,17 @@ import 'mavon-editor/dist/css/index.css';
 
 import clipboard from 'vue-clipboard2';
 
-import ElementUI  from 'element-ui';
-import  'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 import vueEventCalendar from 'vue-event-calendar';
-import "vue-event-calendar/dist/style.css"
+import "vue-event-calendar/dist/style.css";
 
-// use
+import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
+
 Vue.use(mavonEditor);
 Vue.use(clipboard);
-Vue.use(ElementUI );
+Vue.use(ElementUI);
 Vue.use(vueEventCalendar, {locale: 'en'});
 
 Vue.config.productionTip = false;

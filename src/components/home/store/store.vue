@@ -7,7 +7,7 @@
       <div class="noteList">
         <ul>
           <li v-for="item in noteStoreList">
-            <div class="note-left">
+            <div class="note-left" @click="skim(item)">
               <span class="fa fa-file-text-o"></span>
               <span class="note-title">{{item.cn_note_title}}</span>
             </div>
@@ -40,8 +40,8 @@
 </template>
 
 <script>
-  import store from '../../../store'
-  import baseService from '../../../Service/baseService'
+  import store from '../../../store';
+  import baseService from '../../../Service/baseService';
   import storeService from '../../../Service/storeService';
 
   export default {
@@ -59,18 +59,25 @@
 
       },
 
+      skim(value) {
+        this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+      },
+
     },
 
     mounted() {
-       baseService.findNoteInStore();
-       baseService.findNoteBookInStore();
+
+      baseService.findNoteInStore();
+
+      baseService.findNoteBookInStore();
+
     },
 
-    computed:{
-      noteStoreList(){
+    computed: {
+      noteStoreList() {
         return store.state.storeList.noteStoreList;
       },
-      noteBookStoreList(){
+      noteBookStoreList() {
         return store.state.storeList.noteBookStoreList;
       }
     }
@@ -150,7 +157,6 @@
               cursor: pointer;
               .note-right
                 opacity: 1;
-
 
     .store-logo
       text-align: center;

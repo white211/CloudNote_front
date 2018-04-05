@@ -36,7 +36,7 @@
           <h2 class="icon icon-cloud">
             <router-link to="/home">Cloud云笔记</router-link>
           </h2>
-          <ul >
+          <ul>
             <li class="icon icon-arrow-left">
 
               <a class="icon icon-note" href="#">笔记本</a>
@@ -69,7 +69,8 @@
                         <span class="glyphicon glyphicon-edit" @click="resetName(item.cn_notebook_id)"></span>
                         <span v-if="item.cn_notebook_type_id == 2" v-bind="noteBookId" class="glyphicon glyphicon-star"
                               @click="setLike(item.cn_notebook_id)"></span>
-                        <span v-else class="glyphicon glyphicon-star-empty" @click="setLike(item.cn_notebook_id)"></span>
+                        <span v-else class="glyphicon glyphicon-star-empty"
+                              @click="setLike(item.cn_notebook_id)"></span>
                         <span class="icon icon-trash" @click="deleteNoteBook(item.cn_notebook_id)"></span>
                       </div>
                     </a>
@@ -393,7 +394,7 @@
             }
             api.post('/notebook/findNoteBook.do', {
               searchText: val,
-              userId:store.state.user.cn_user_id
+              userId: store.state.user.cn_user_id
             }).then((res) => {
               console.log(res);
               if (res.data.status === 0) {
@@ -416,21 +417,21 @@
         })
           .then((willDelete) => {
             if (willDelete) {
-                api.post('/notebook/deleteNoteBook.do',{
-                   userId:store.state.user.cn_user_id,
-                   noteBookId:noteBookId,
-                }).then((res)=>{
-                   if(res.data.status === 0){
-                     swal("已经被删除，可到回收站找回", {
-                       icon: "success",
-                     });
-                   }else{
-                     swal("删除失败", {
-                       icon: "error",
-                     });
-                   }
-                  console.log(res);
-                });
+              api.post('/notebook/deleteNoteBook.do', {
+                userId: store.state.user.cn_user_id,
+                noteBookId: noteBookId,
+              }).then((res) => {
+                if (res.data.status === 0) {
+                  swal("已经被删除，可到回收站找回", {
+                    icon: "success",
+                  });
+                } else {
+                  swal("删除失败", {
+                    icon: "error",
+                  });
+                }
+                console.log(res);
+              });
             }
           });
       },
@@ -440,7 +441,7 @@
           api.post('notebook/setNoteBookType.do', {
             userId: store.state.user.cn_user_id,
             noteBookId: this.noteBookId,
-            noteBookType:2,
+            noteBookType: 2,
           }).then((res) => {
             console.log(res);
           });
@@ -477,7 +478,7 @@
             }
             api.post('/notebook/resetName.do', {
               newName: val,
-              noteBookId:noteBookId,
+              noteBookId: noteBookId,
               userId: store.state.user.cn_user_id,
             }).then((res) => {
               console.log(res);

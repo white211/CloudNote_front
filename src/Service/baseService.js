@@ -11,7 +11,7 @@ const baseService = {
       api.post('/notebook/noteBookList.do', {userId: store.state.user.cn_user_id})
         .then((res) => {
           if (res.data.status === 0) {
-            store.commit("noteBookList",res.data.data);
+            store.commit("noteBookList", res.data.data);
             resolve(res.data.data);
           } else {
             reject(res);
@@ -30,7 +30,7 @@ const baseService = {
       api.post('/note/noteList.do', {userId: store.state.user.cn_user_id})
         .then((res) => {
           if (res.data.status === 0) {
-            store.commit("noteList",res.data.data);
+            store.commit("noteList", res.data.data);
             resolve(res.data.data);
           } else {
             reject(res);
@@ -42,20 +42,22 @@ const baseService = {
     });
   },
 
-  getTagList(){
-     return new Promise((resolve =() =>{},reject=()=>{})=>{
-       api.post('/label/labelList.do', {
-         userId: store.state.user.cn_user_id
-       }).then((res) => {
-         if (res.data.status === 0) {
-           store.commit("tagList",res.data.data);
-           resolve(res.data.data);
-         }
-       });
-     });
+  getTagList() {
+    return new Promise((resolve = () => {
+    }, reject = () => {
+    }) => {
+      api.post('/label/labelList.do', {
+        userId: store.state.user.cn_user_id
+      }).then((res) => {
+        if (res.data.status === 0) {
+          store.commit("tagList", res.data.data);
+          resolve(res.data.data);
+        }
+      });
+    });
   },
 
-  findNoteInTrash(){
+  findNoteInTrash() {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -65,7 +67,7 @@ const baseService = {
       })
         .then((res) => {
           if (res.data.status === 0) {
-            store.commit("noteTrashList",res.data.data);
+            store.commit("noteTrashList", res.data.data);
             resolve(res.data.data);
           } else {
             reject(res);
@@ -77,7 +79,7 @@ const baseService = {
     });
   },
 
-  findNoteBookInTrash(){
+  findNoteBookInTrash() {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -87,7 +89,7 @@ const baseService = {
       })
         .then((res) => {
           if (res.data.status === 0) {
-            store.commit("noteBookTrashList",res.data.data);
+            store.commit("noteBookTrashList", res.data.data);
             resolve(res.data.data);
           } else {
             reject(res);
@@ -99,7 +101,7 @@ const baseService = {
     });
   },
 
-  findNoteInStore(){
+  findNoteInStore() {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -109,7 +111,7 @@ const baseService = {
       })
         .then((res) => {
           if (res.data.status === 0) {
-            store.commit("noteStoreList",res.data.data);
+            store.commit("noteStoreList", res.data.data);
             resolve(res.data.data);
           } else {
             reject(res);
@@ -121,7 +123,7 @@ const baseService = {
     });
   },
 
-  findNoteBookInStore(){
+  findNoteBookInStore() {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -131,7 +133,7 @@ const baseService = {
       })
         .then((res) => {
           if (res.data.status === 0) {
-            store.commit("noteBookStoreList",res.data.data);
+            store.commit("noteBookStoreList", res.data.data);
             resolve(res.data.data);
           } else {
             reject(res);
@@ -143,19 +145,22 @@ const baseService = {
     });
   },
 
-  getWeather(city){
-    return new Promise((resolve=() =>{},reject=()=>{})=>{
-       api.post('/user/getWeather.do',{
-         city:city
-       }).then((res)=>{
-         if(res.data.status === 0){
-            resolve(res.data.data.results[0]);
-         }else{
-           reject(res);
-         }
-       })
-    })
-  }
+  getWeather(city) {
+    return new Promise((resolve = () => {
+    }, reject = () => {
+    }) => {
+      api.post('/user/getWeather.do', {
+        city: city
+      }).then((res) => {
+        if (res.data.status === 0) {
+          resolve(res.data.data.results[0]);
+        } else {
+          reject(res);
+        }
+      });
+    });
+  },
+
 
 };
 

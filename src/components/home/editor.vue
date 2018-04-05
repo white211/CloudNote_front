@@ -55,7 +55,8 @@
         noteDesc: '',
         noteContent: '',
         noteId: '',
-        data: ''
+        data: '',
+        jjid: ''
       };
     },
 
@@ -76,7 +77,7 @@
               baseService.getNoteBookList();
               baseService.getNoteList();
               baseService.getTagList();
-              this.resetData();
+                this.resetData();
             });
           } else {
             swal(res.data.msg);
@@ -105,6 +106,7 @@
         this.noteTitle = '';
         this.noteDesc = '';
         this.noteContent = '';
+        this.noteId = '';
       }
 
     },
@@ -115,12 +117,17 @@
         api.post('/note/findNoteById.do', {
           noteId: this.activeNoteId
         }).then((res) => {
-          this.noteLabelId = res.data.data.cn_note_label_id,
-            this.noteBookId = res.data.data.cn_note_book_id,
-            this.noteTitle = res.data.data.cn_note_title,
-            this.noteDesc = res.data.data.cn_note_desc,
-            this.noteContent = res.data.data.cn_note_content;
-          this.noteId = res.data.data.cn_note_id;
+          if (res.data.status === 0) {
+            this.noteLabelId = res.data.data.cn_note_label_id || '',
+              this.noteBookId = res.data.data.cn_note_book_id || '',
+              this.noteTitle = res.data.data.cn_note_title || '',
+              this.noteDesc = res.data.data.cn_note_desc || '',
+              this.noteContent = res.data.data.cn_note_content || '';
+            this.noteId = res.data.data.cn_note_id || '';
+          }
+
+        }, (err) => {
+          console.log('cuowu', err);
         });
       }
 
@@ -132,7 +139,7 @@
     computed: {
 
       activeNote() {
-        if (this.$route.params.id != null) {
+        if (this.$route.params.id !== null) {
           return this.$route.params.id;
         } else {
           this.resetData();
@@ -155,16 +162,21 @@
 
     watch: {
       activeNote(val) {
-        api.post('/note/findNoteById.do', {
-          noteId: val
-        }).then((res) => {
-          this.noteLabelId = res.data.data.cn_note_label_id,
-            this.noteBookId = res.data.data.cn_note_book_id,
-            this.noteTitle = res.data.data.cn_note_title,
-            this.noteDesc = res.data.data.cn_note_desc,
-            this.noteContent = res.data.data.cn_note_content;
-          this.noteId = res.data.data.cn_note_id;
-        });
+        if (val) {
+          api.post('/note/findNoteById.do', {
+            noteId: val
+          }).then((res) => {
+            this.noteLabelId = res.data.data.cn_note_label_id || '';
+            this.noteBookId = res.data.data.cn_note_book_id || '';
+            this.noteTitle = res.data.data.cn_note_title || '';
+            this.noteDesc = res.data.data.cn_note_desc || '';
+            this.noteContent = res.data.data.cn_note_content || '';
+            this.noteId = res.data.data.cn_note_id || '';
+          });
+        } else {
+          this.resetData();
+        }
+
       },
 
     },

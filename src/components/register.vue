@@ -97,29 +97,29 @@
     },
     methods: {
       sendCheckNum() {
-        api.post('/user/sendCheckNum.do',{
-          telephone:this.telephone
+        api.post('/user/sendCheckNum.do', {
+            telephone: this.telephone
           }
         ).then((response) => {
-           swal(response.data.msg);
-           console.log(response);
+          swal(response.data.msg);
+          console.log(response);
         });
       },
-      register_btn(){
-         api.post('/user/register.do',{
-            email:this.username,
-            password:this.password,
-            checkNum:this.checkNum,
-            telephone:this.telephone
-         }).then((response)=>{
-           if(response.data.status == 0){
-             swal("注册成功","请前往邮箱激活","success");
-              this.$router.replace({path:'/login'});
-           }else{
-             swal(response.data.msg);
-           }
-           console.log(response);
-         })
+      register_btn() {
+        api.post('/user/register.do', {
+          email: this.username,
+          password: this.password,
+          checkNum: this.checkNum,
+          telephone: this.telephone
+        }).then((response) => {
+          if (response.data.status == 0) {
+            swal("注册成功", "请前往邮箱激活", "success");
+            this.$router.replace({path: '/login'});
+          } else {
+            swal(response.data.msg);
+          }
+          console.log(response);
+        });
       },
     }
 
@@ -164,6 +164,7 @@
           margin: 0 auto;
           margin-top: 25px;
           text-align: center;
+          user-select: none;
           .row-text
             width: 130px;
             height: 50px;
@@ -176,7 +177,8 @@
             height: 50px;
             display: inline-block;
             font-size: 22px;
-            border :1px solid grey;
+            border: 1px solid grey;
+            padding :5px 5px 5px 8px;
             &::-webkit-input-placeholder
               font-size: 13px;
               color: #687b7c;

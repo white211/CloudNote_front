@@ -1,5 +1,5 @@
 <template>
-  <div  style="max-width: 2000px;min-width: 660px;margin: 0 auto;border-top: #74898a 2px solid;">
+  <div style="max-width: 2000px;min-width: 660px;margin: 0 auto;border-top: #74898a 2px solid;">
     <!--box-shadow: 0px 2px 8px 1px rgba(0,0,0,0.2);-->
     <div id="nav">
 
@@ -128,9 +128,7 @@
     mounted() {
       this.flag = !this.$store.state.user;
     },
-    methods: {
-
-    }
+    methods: {}
 
   };
 </script>
@@ -186,6 +184,7 @@
     left: 15%;
     top: 100px;
     /*transform:rotate(-15deg);*/
+    user-select: none;
   }
 
   .carousel-inner .item .banner-text {
@@ -194,7 +193,7 @@
     top: -100px;
     width: 400px;
     display: inline-block;
-
+    user-select: none;
   }
 
   .carousel-inner .item .banner-text .text-title {

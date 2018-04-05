@@ -35,17 +35,39 @@
 
       <div class="item">
         <span class="text">用户名：</span>
-        <el-input v-model="user.name"  class="input" clearable></el-input>
+        <el-input v-model="user.name" class="input" clearable></el-input>
       </div>
 
       <div class="item">
         <span class="text">昵称：</span>
-        <el-input v-model="user.nickName"  class="input" clearable></el-input>
+        <el-input v-model="user.nickName" class="input" clearable></el-input>
       </div>
 
       <div class="item">
         <span class="text">手机号：</span>
-        <el-input v-model="user.telephone" :disabled="true"  class="input" ></el-input>
+        <el-input v-model="user.telephone" :disabled="true" class="input"></el-input>
+      </div>
+
+      <div class="item">
+        <span class="text">住址：</span>
+        <el-cascader
+          size="large"
+          :options="options"
+
+          v-model="selectedOptions"
+          clearable
+          :placeholder="user.address"
+          @change="handleChange">
+        </el-cascader>
+      </div>
+
+      <div class="item">
+        <span class="text">性别：</span>
+        <el-radio-group v-model="user.sex">
+          <el-radio :label="1">男</el-radio>
+          <el-radio :label="0">女</el-radio>
+          <el-radio :label="2">保密</el-radio>
+        </el-radio-group>
       </div>
 
       <div class="item">
@@ -59,25 +81,7 @@
         </el-date-picker>
       </div>
 
-      <div class="item">
-        <span class="text">性别：</span>
-        <el-radio-group v-model="user.sex">
-          <el-radio :label="1">男</el-radio>
-          <el-radio :label="0">女</el-radio>
-          <el-radio :label="2">保密</el-radio>
-        </el-radio-group>
-      </div>
 
-      <div class="item">
-        <span class="text" >住址：</span>
-        <!--<el-input v-model="user.address" class="address" ></el-input>-->
-        <el-cascader
-          :options="options2"
-          @active-item-change="handleItemChange"
-          :props="props"
-          :placeholder="user.address"
-        ></el-cascader>
-      </div>
       <div class="item">
         <div class="btn">
           <el-button type="info" plain class="saveUserBtn" @click="save">保存</el-button>
@@ -91,8 +95,12 @@
 <script>
   import baseService from '../../../Service/baseService';
   import store from '../../../store';
+  import api from '../../../api';
+  import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
+  import swal from 'sweetalert';
 
   export default {
+
     data() {
       return {
         name: "userInfo",
@@ -106,27 +114,15 @@
         demoEvents: [],
         user: {
           email: '',
-          telephone:'',
-          name:'',
-          nickName:'',
-          sex:'',
-          birthday:'',
-          address:''
+          telephone: '',
+          name: '',
+          nickName: '',
+          sex: '',
+          birthday: '',
+          address: ''
         },
-        options2: [
-        {
-          label: '江苏',
-          cities: []
-        },
-        {
-          label: '浙江',
-          cities: []
-        }
-        ],
-        props: {
-          value: 'label',
-          children: 'cities'
-        }
+        options: regionData,
+        selectedOptions: [],
       };
     },
 
@@ -154,12 +150,41 @@
     methods: {
 
       //保存用户信息
-      save(){
+      save() {
+       if (this.selectedOptions.length !== 0){
+         this.user.address = CodeToText[this.selectedOptions[0]]+CodeToText[this.selectedOptions[1]]+CodeToText[this.selectedOptions[2]];
+       }
 
+        api.post('/user/updateInfo.do', {
+          userId: store.state.user.cn_user_id,
+          nickname: this.user.nickName,
+          name: this.user.name,
+          birthday: this.user.birthday,
+          sex: this.user.sex,
+          address:this.user.address
+        }).then((res) => {
+          if (res.data.status === 0) {
+            store.commit("user",res.data.data);
+            this.loadUserInfo();
+            swal({
+              text: '已保存',
+              title: '',
+              icon: 'success',
+              timer: 3000
+            });
+          } else {
+            swal({
+              text: res.data.msg,
+              title: '',
+              icon: 'error',
+              timer: 3000
+            });
+          }
+        });
       },
 
-      //记载用户信息显示出来
-      loadUserInfo(){
+      //加载用户信息显示出来
+      loadUserInfo() {
         this.user.email = store.state.user.cn_user_email;
         this.user.name = store.state.user.cn_user_name;
         this.user.nickName = store.state.user.cn_user_nickname;
@@ -179,23 +204,12 @@
         console.log(day);
       },
 
-      //城市列表
-      handleItemChange(val) {
-        console.log('active item:', val);
-        setTimeout(_ => {
-          if (val.indexOf('江苏') > -1 && !this.options2[0].cities.length) {
-            this.options2[0].cities = [{
-              label: '南京'
-            }];
-          } else if (val.indexOf('浙江') > -1 && !this.options2[1].cities.length) {
-            this.options2[1].cities = [{
-              label: '杭州'
-            }];
-          }
-        }, 300);
+      handleChange(value) {
+        console.log(value);
       },
 
     },
+
 
   }
   ;
@@ -271,6 +285,7 @@
       padding-left: 20px;
       padding-right: 20px;
       padding-top: 20px;
+      user-select :none;
       .item
         width: 770px;
         height: 50px;
@@ -289,14 +304,14 @@
           height: 50px;
           line-height: 50px;
         .address
-          width :200px;
+          width: 200px;
         .btn
-          padding-left :50px;
-          width :770px;
+          padding-left: 50px;
+          width: 770px;
           .saveUserBtn
-            width :600px;
-            font-size :18px;
-            letter-spacing :20px;
+            width: 600px;
+            font-size: 18px;
+            letter-spacing: 20px;
 
 
 </style>

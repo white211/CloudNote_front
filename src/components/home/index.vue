@@ -240,12 +240,12 @@
           noteId: this.activeNoteId
         }).then((res) => {
           this.noteLabelId = res.data.data.cn_note_label_id,
-          this.noteBookId = res.data.data.cn_note_book_id,
-          this.noteTitle = res.data.data.cn_note_title,
-          this.noteDesc = res.data.data.cn_note_desc,
-          this.msg = res.data.data.cn_note_content;
+            this.noteBookId = res.data.data.cn_note_book_id,
+            this.noteTitle = res.data.data.cn_note_title,
+            this.noteDesc = res.data.data.cn_note_desc,
+            this.msg = res.data.data.cn_note_content;
           this.noteId = res.data.data.cn_note_id;
-      });
+        });
       }
 
     },
@@ -325,7 +325,7 @@
             width: 50px
             height: 50px
             border-radius: 50%
-            border :1px solid #95a5a6;
+            border: 1px solid #95a5a6;
             img
               width: 50px
               height: 50px

@@ -13,7 +13,7 @@
             </div>
             <div class="note-right">
               <span class="fa fa-refresh" title="还原文件" @click="refresh(item.cn_note_id,1)"></span>
-              <span class="fa fa-times-circle-o"  title="彻底删除" @click="deleteExatly(item.cn_note_id,1)"></span>
+              <span class="fa fa-times-circle-o" title="彻底删除" @click="deleteExatly(item.cn_note_id,1)"></span>
             </div>
           </li>
         </ul>
@@ -52,28 +52,28 @@
       };
     },
 
-    methods:{
+    methods: {
 
-      refresh(id,type){
-         trashService.refresh(id,type);
+      refresh(id, type) {
+        trashService.refresh(id, type);
       },
 
-      deleteExatly(id,type){
-        trashService.deleteExatly(id,type);
+      deleteExatly(id, type) {
+        trashService.deleteExatly(id, type);
       },
 
     },
 
-    mounted(){
+    mounted() {
       baseService.findNoteInTrash();
       baseService.findNoteBookInTrash();
     },
 
-    computed:{
-      noteBookTrashList(){
+    computed: {
+      noteBookTrashList() {
         return store.state.trashList.noteBookTrashList;
       },
-      noteTrashList(){
+      noteTrashList() {
         return store.state.trashList.noteTrashList;
       },
     }
@@ -122,7 +122,7 @@
               opacity: 0;
               transition: opacity .5s;
               span
-                margin-right :10px;
+                margin-right: 10px;
             &:hover
               background-color: #2dbe60;
               color: white;
@@ -149,14 +149,13 @@
               opacity: 0;
               transition: opacity .5s;
               span
-                margin-right :10px;
+                margin-right: 10px;
             &:hover
               background-color: #2dbe60;
               color: white;
               cursor: pointer;
               .note-right
                 opacity: 1;
-
 
     .store-logo
       text-align: center;

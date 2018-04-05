@@ -7,7 +7,8 @@
       <div>
         <el-input placeholder="请输入内容" v-model="searchText" class="input-with-select">
           <el-select v-model="select" slot="prepend" placeholder="笔记本">
-            <el-option v-for="item in noteBookList" v-if="item.noteCount !== 0" v-bind:label="item.cn_notebook_name" v-bind:value="item.cn_notebook_id"></el-option>
+            <el-option v-for="item in noteBookList" v-if="item.noteCount !== 0" v-bind:label="item.cn_notebook_name"
+                       v-bind:value="item.cn_notebook_id"></el-option>
           </el-select>
         </el-input>
       </div>
@@ -44,9 +45,9 @@
 </template>
 
 <script>
-  import  store from '../../../store';
-  import noteService from  '../../../Service/noteService';
-  import baseService from '../../../Service/baseService'
+  import store from '../../../store';
+  import noteService from '../../../Service/noteService';
+  import baseService from '../../../Service/baseService';
 
   export default {
 
@@ -54,9 +55,9 @@
       return {
         name: "findNote",
         searchText: '',
-        select:'',
-        noteList:[],
-        message:''
+        select: '',
+        noteList: [],
+        message: ''
       };
     },
 
@@ -90,7 +91,7 @@
         this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
       },
       deleteNote(noteId, noteTypeId) {
-        noteService.deleteNote(noteId,noteTypeId);
+        noteService.deleteNote(noteId, noteTypeId);
       },
       StoreNote(noteId, noteTypeId) {
         noteService.StoreNote(noteId, noteTypeId);
@@ -101,27 +102,27 @@
     },
 
     mounted() {
-       baseService.getNoteBookList();
+      baseService.getNoteBookList();
     },
 
-    computed:{
-      noteBookList(){
-         return store.state.main.noteBookList;
+    computed: {
+      noteBookList() {
+        return store.state.main.noteBookList;
       },
     },
 
-    watch:{
-      searchText(value){
-        if(this.select && value){
-          noteService.SearchText(value,this.select).then((res)=>{
-            if(res){
+    watch: {
+      searchText(value) {
+        if (this.select && value) {
+          noteService.SearchText(value, this.select).then((res) => {
+            if (res) {
               this.noteList = res;
-            }else {
-              this.noteList =[];
+            } else {
+              this.noteList = [];
             }
           });
-        }else{
-          this.noteList =[];
+        } else {
+          this.noteList = [];
         }
       },
 
@@ -152,18 +153,18 @@
       width: 400px;
       padding-right: 10px;
       border-bottom: 3px solid #dce4ec;
-      padding-left :10px;
+      padding-left: 10px;
       .el-select
         width: 90px;
       .input-with-select
       .el-input-group__prepend
-        width :370px;
+        width: 370px;
     .store-logo
       text-align: center;
       margin-top: 50%
       .logo
         font-size: 80px;
-        height :80px;
+        height: 80px;
         color: #2dbe60
       span
         width: 400px;

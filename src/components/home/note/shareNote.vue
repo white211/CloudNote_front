@@ -293,10 +293,10 @@
         padding: 20px 0 20px 0;
         .avatar
           float: left;
-          width :60px;
-          height :60px;
+          width: 60px;
+          height: 60px;
           border-radius: 50%;
-          border :1px solid #dce4ec;
+          border: 1px solid #dce4ec;
           img
             width: 60px;
             height: 60px;
@@ -318,7 +318,7 @@
         clear: both;
         min-height: 350px;
         padding-left: 20px;
-        padding-right :20px;
+        padding-right: 20px;
         ol
           padding-left: 30px
         ul
@@ -347,9 +347,9 @@
             text-align: center
             line-height: 50px;
             height: 50px;
-            width :50px;
+            width: 50px;
             /*border :1px solid #95a5a6;*/
-            border-radius :50%;
+            border-radius: 50%;
             margin-right: 30px;
             img
               width: 50px;
@@ -368,8 +368,8 @@
               border-radius: 5px;
               font-size: 18px;
               resize: none
-              padding-left :10px;
-              padding-right :10px;
+              padding-left: 10px;
+              padding-right: 10px;
           .btn_com
             width: 700px;
             .com_btn
@@ -414,7 +414,7 @@
                 margin-right: 20px;
                 width: 40px;
                 /*border :1px solid #95a5a6;*/
-                border-radius :50%;
+                border-radius: 50%;
                 img
                   height: 40px;
                   line-height: 40px;
