@@ -4,24 +4,27 @@
       <div class="com">
         <span class="fa fa-book"></span>
         <el-select v-model="noteBookId" placeholder="笔记本"
-                   size="mini" class="select">
+                   size="mini" class="select" filterable
+        >
           <el-option
             v-for="item in noteBookList"
             :key="item.cn_notebook_id"
             :label="item.cn_notebook_name"
-            :value="item.cn_notebook_id">
+            :value="item.cn_notebook_id"
+          >
           </el-option>
         </el-select>
       </div>
       <div class="com">
         <span class="fa fa-tags"></span>
         <el-select v-model="noteLabelId" placeholder="标签"
-                   size="mini" class="select">
+                   size="mini" class="select"  filterable>
           <el-option
             v-for="item in labelList"
             :key="item.cn_label_id"
             :label="item.cn_label_name"
-            :value="item.cn_label_id">
+            :value="item.cn_label_id"
+          >
           </el-option>
         </el-select>
       </div>
