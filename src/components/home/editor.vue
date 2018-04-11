@@ -92,6 +92,7 @@
         // 第一步.将图片上传到服务器.
         var formdata = new FormData();
         formdata.append('image', $file);
+        console.log($file);
         axios({
           url: 'http://127.0.0.1:8080/note/uploadFile.do',
           method: 'post',

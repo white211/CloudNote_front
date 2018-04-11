@@ -1,4 +1,5 @@
 <template>
+
   <div style="max-width: 2000px;min-width: 660px;margin: 0 auto;border-top: #74898a 2px solid;">
     <!--box-shadow: 0px 2px 8px 1px rgba(0,0,0,0.2);-->
     <div id="nav">
@@ -28,43 +29,51 @@
 
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
-          <div class="item active" id="banner1">
-            <img src="@/assets/banner1-1.jpg" alt="...">
-            <div class="banner-text">
-               <span class="text-title">随时记录一切
 
+          <div class="item active" id="banner1" v-bind:style="{backgroundImage:'url(' + first.bpic + ')'}">
+
+            <img :src="first.spic" v-if="first.spic !== null">
+
+            <div class="banner-text">
+               <span class="text-title" style="display: block">
+                 {{first.title}}
                </span>
-              <span class="text-content">
-                 无论是点滴灵感、待办清单、或是会议记录、项目资料，印象笔记在手，方便随时记录，永久保存内容。
+              <span class="text-content" style="display: block">
+{{first.desc}}
+              </span>
+            </div>
+
+          </div>
+
+          <div class="item" id="banner2" v-bind:style="{backgroundImage:'url(' + second.bpic + ')'}">
+            <img :src="second.spic" style="transform:rotate(-15deg);" >
+            <div class="banner-text">
+               <span class="text-title" style="display: block">
+{{second.title}}
+               </span>
+              <span class="text-content" style="display: block">
+{{second.desc}}
               </span>
             </div>
           </div>
-          <div class="item" id="banner2">
-            <img src="@/assets/banner2-1.jpg" alt="..." style="transform:rotate(-15deg);">
-            <div class="banner-text">
-               <span class="text-title">
-                 快速查找所需
-               </span>
-              <span class="text-content">
-                 一个简单的搜索框，就能轻松找到你放进印象笔记的一切。无论是笔记、图片甚至是附件内的文字，云笔记能迅速帮你搜索到任何记忆
-              </span>
-            </div>
-          </div>
-          <div class="item" id="banner3">
-            <img src="@/assets/banner3-1.jpg" alt="..." style="transform:rotate(15deg);">
-            <div class="banner-text">
-               <span class="text-title">分享笔记
 
+          <div class="item" id="banner3" v-bind:style="{backgroundImage:'url(' + third.bpic + ')'}">
+              <img :src="third.spic" style="transform:rotate(15deg);">
+            <div class="banner-text">
+               <span class="text-title" style="display: block">
+{{third.title}}
                </span>
-              <span class="text-content">
-                 记录了学习生活中的点滴，分享给广大亲朋好用，让大家一起学习认识。
+              <span class="text-content" style="display: block">
+{{third.desc}}
               </span>
             </div>
+
           </div>
 
         </div>
 
       </div>
+
     </div>
 
     <div id="function">
@@ -109,24 +118,65 @@
          <span class="glyphicon glyphicon-copyright-mark"></span>仲恺农业工程学院计算科学学院 粤ICP证510550号      违法和不良信息举报电话：188-141-42741
       </span>
     </div>
+
     <div>
       <router-view></router-view>
     </div>
+
   </div>
 
 </template>
 
 <script>
-  // import store from '../store';
+  import api from '../api';
+
   export default {
     name: 'Main',
     data() {
       return {
-        flag: true
+        flag: true,
+        first: {
+          title: '',
+          desc: '',
+          spic: null,
+          bpic: null
+        },
+        second: {
+          title: '',
+          desc: '',
+          spic: null,
+          bpic: null
+        },
+        third: {
+          title: '',
+          desc: '',
+          spic: null,
+          bpic: null
+        }
       };
     },
     mounted() {
       this.flag = !this.$store.state.user;
+
+      api.post("/home/findHome.do", {}).then((res) => {
+        if (res.data.status === 0) {
+          this.first.bpic = res.data.data[0].cn_first_bpic;
+          this.first.spic = res.data.data[0].cn_first_spic;
+          this.first.title = res.data.data[0].cn_first_title;
+          this.first.desc = res.data.data[0].cn_first_desc;
+
+          this.second.bpic = res.data.data[0].cn_second_bpic;
+          this.second.spic = res.data.data[0].cn_second_spic;
+          this.second.title = res.data.data[0].cn_second_title;
+          this.second.desc = res.data.data[0].cn_second_desc;
+
+          this.third.bpic = res.data.data[0].cn_third_bpic;
+          this.third.spic = res.data.data[0].cn_third_spic;
+          this.third.title = res.data.data[0].cn_third_title;
+          this.third.desc = res.data.data[0].cn_third_desc;
+        }
+      });
+
     },
     methods: {}
 
@@ -153,27 +203,25 @@
     min-width: 660px;
     max-width: 1800px;
     margin: 0 auto;
-    /*background-color: rgb(240, 240, 240);*/
   }
 
   .carousel-inner .item {
     height: 500px;
     background-size: 100% 500px;
-    /*background-image: url("../assets/banner4.jpg");*/
   }
 
   .carousel-inner #banner1 {
-    background-image: url("../assets/banner1.png");
+    /*background-image: url("../assets/banner1.png");*/
     background-size: 100% 500px;
   }
 
   .carousel-inner #banner2 {
-    background-image: url("../assets/banner2.png");
+    /*background-image: url("../assets/banner2.png");*/
     background-size: 100% 500px;
   }
 
   .carousel-inner #banner3 {
-    background-image: url("../assets/banner4.jpg");
+    /*background-image: url("../assets/banner4.jpg");*/
     background-size: 100% 500px;
   }
 
@@ -183,8 +231,8 @@
     position: relative;
     left: 15%;
     top: 100px;
-    /*transform:rotate(-15deg);*/
     user-select: none;
+    border: none;
   }
 
   .carousel-inner .item .banner-text {
@@ -197,13 +245,13 @@
   }
 
   .carousel-inner .item .banner-text .text-title {
-    display: inline-block;
+    display: block;
     font-size: 40px;
     color: #0e6f5c;
   }
 
   .carousel-inner .item .banner-text .text-content {
-    display: inline-block;
+    display: block;
     font-size: 20px;
     color: #0d1318;
   }
@@ -218,14 +266,12 @@
   #function {
     min-width: 660px;
     max-width: 1800px;
-    /*margin: 0 auto;*/
     text-align: center;
     vertical-align: center;
   }
 
   #function .function img {
     width: 960px;
-
     text-align: center;
   }
 
@@ -244,7 +290,6 @@
     display: inline-block;
     margin-left: 5px;
     margin-right: 5px;
-
   }
 
   #bottom li a {

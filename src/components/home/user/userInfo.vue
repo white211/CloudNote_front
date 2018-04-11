@@ -128,7 +128,7 @@
 
     mounted() {
 
-      baseService.getWeather("香港").then((res) => {
+      baseService.getWeather("广州").then((res) => {
         this.weather.url = "http://oxdypxsie.bkt.clouddn.com/weather" + res.now.code + ".png";
         this.weather.temp = res.now.temperature;
         this.weather.text = res.now.text;
