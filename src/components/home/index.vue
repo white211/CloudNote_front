@@ -112,7 +112,6 @@
           <input type="checkbox" name="info" id="info" v-model="info"/>
           <div class="info-block">
             <div class="info-block-avatar">
-              <!--<router-link to="/user/updateAvatar">-->
               <label for="openFile">
                 <div id="avatar">
                   <input @change="updateAvatar($event)" type="file" name="avatar" id="openFile"/>
@@ -120,7 +119,6 @@
                   <img src="@/assets/default.png" alt="" v-else title="点击更换头像"/>
                 </div>
               </label>
-              <!--</router-link>-->
               <span>{{email}}</span>
             </div>
             <div class="fuc-list">

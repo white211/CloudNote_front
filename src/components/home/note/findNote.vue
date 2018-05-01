@@ -7,7 +7,7 @@
       <div>
         <el-input placeholder="请输入内容" v-model="searchText" class="input-with-select">
           <el-select v-model="select" slot="prepend" placeholder="笔记本">
-            <el-option v-for="item in noteBookList" v-if="item.noteCount !== 0" v-bind:label="item.cn_notebook_name"
+            <el-option v-for="item in noteBookList" v-if="item.noteCount !== 0" v-bind:label="item.cn_notebook_name" :key="item.id"
                        v-bind:value="item.cn_notebook_id"></el-option>
           </el-select>
         </el-input>

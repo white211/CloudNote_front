@@ -1,11 +1,13 @@
 import api from '../api';
 import store from '../store';
 import baseService from './baseService';
+import tagService from './tagService';
+import notebookService from './noetbookService';
 
 const noteService = {
 
   //删除笔记
-  deleteNote(noteId, noteTypeId) {
+  deleteNote(item, noteTypeId) {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
@@ -19,7 +21,7 @@ const noteService = {
         .then((willDelete) => {
           if (willDelete) {
             api.post('/note/updateNoteTypeId.do', {
-              noteId: noteId,
+              noteId: item.cn_note_id,
               noteTypeId: noteTypeId
             }).then((res) => {
               if (res.data.status === 0) {
@@ -34,6 +36,12 @@ const noteService = {
                   store.commit("noteBookTrashList", baseService.findNoteBookInTrash());
                   store.commit("noteStoreList", baseService.findNoteInStore());
                   store.commit("noteBookStoreList", baseService.findNoteBookInStore());
+                  if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
+                    store.commit("noteListInTag", tagService.findNoteByNoteTagId(item.cn_note_label_id));
+                  }
+                  if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
+                    store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
+                  }
                   resolve(res.data.data);
                 });
               } else {
@@ -55,12 +63,12 @@ const noteService = {
   },
 
   //收藏笔记
-  StoreNote(noteId, noteTypeId) {
+  StoreNote(item, noteTypeId) {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
       api.post('/note/updateNoteTypeId.do', {
-        noteId: noteId,
+        noteId: item.cn_note_id,
         noteTypeId: noteTypeId
       }).then((res) => {
         if (noteTypeId == 1) {
@@ -72,6 +80,12 @@ const noteService = {
             }).then(value => {
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("noteList", baseService.getNoteList());
+              if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
+                store.commit("noteListInTag", tagService.findNoteByNoteTagId(item.cn_note_label_id));
+              }
+              if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
+                store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
+              }
               resolve(res.data.data);
             });
           } else {
@@ -90,6 +104,12 @@ const noteService = {
             }).then(value => {
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("noteList", baseService.getNoteList());
+              if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
+                store.commit("noteListInTag", tagService.findNoteByNoteTagId(item.cn_note_label_id));
+              }
+              if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
+                store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
+              }
               resolve(res.data.data);
             });
           } else {
@@ -128,8 +148,156 @@ const noteService = {
       }
 
     });
-  }
+  },
 
+  /**
+   * 加密解密笔记
+   */
+  encrypt(item, encryptType) {
+    return new Promise((resolve = () => {
+    }, reject = () => {
+    }) => {
+      api.post('/note/updateEncrypt.do', {
+        noteId: item.cn_note_id,
+        encryptType: encryptType
+      }).then((res) => {
+        if (encryptType == 0) {
+          if (res.data.status === 0) {
+            swal({
+              title: '',
+              text: '已加密',
+              icon: 'success',
+              timer: 2000
+            }).then(value => {
+              store.commit("noteList", baseService.getNoteList());
+              if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
+                store.commit("noteListInTag", tagService.findNoteByNoteTagId(item.cn_note_label_id));
+              }
+              if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
+                store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
+              }
+              resolve(res.data.data);
+            });
+          } else {
+            swal({
+              title: '',
+              text: '加密失败',
+              icon: 'error',
+              timer: 2000
+            });
+          }
+        } else if (encryptType == 1) {
+          if (res.data.status === 0) {
+            swal({
+              title: '',
+              text: '已取消加密',
+              icon: 'success',
+              timer: 2000
+            }).then(value => {
+              store.commit("noteList", baseService.getNoteList());
+              if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
+                store.commit("noteListInTag", tagService.findNoteByNoteTagId(item.cn_note_label_id));
+              }
+              if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
+                store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
+              }
+              resolve(res.data.data);
+            });
+          } else {
+            swal({
+              title: '',
+              text: '取消加密失败',
+              icon: 'error',
+              timer: 2000
+            });
+          }
+        }
+      });
+    });
+  },
+
+  /**
+   * 浏览笔记内容
+   * @param note
+   * @returns {Promise<any>}
+   */
+  skim(note) {
+    return new Promise((resolve = () => {
+    }, reject = () => {
+    }) => {
+      if (note.cnNoteIsEncrypt === 0) {
+        swal({
+          title: '阅读密码',
+          text: '',
+          content: {
+            element: 'input',
+            attributes: {
+              type: 'password',
+            },
+          },
+          buttons: {
+            confirm: {
+              text: '确定',
+              closeModal: true,
+              value: true,
+              visible: true,
+              className: "",
+            },
+          }
+        }).then((val) => {
+          api.post('/note/checkReadPassword.do', {
+            readPass: val,
+            userId: note.cn_user_id
+          }).then((res) => {
+            if (res.data.status === 0) {
+              resolve(true);
+              // this.$router.push({path: `/home/newNote/${note.cn_note_id}`});
+            } else {
+              swal({
+                title: '',
+                text: '密码错误',
+                icon: 'error',
+                timer: 1500
+              }).then((res) => {
+                resolve(false);
+              });
+            }
+          });
+        });
+      } else {
+        resolve(true);
+        // this.$router.push({path: `/home/newNote/${note.cn_note_id}`});
+      }
+    }).then((res) => {
+      return res;
+    });
+  },
+
+  shareNote(item, shareType) {
+    return new Promise((resolve = () => {
+    }, reject = () => {
+    }) => {
+      api.post("/note/updateNoteIsShare.do", {
+        noteId: item.cn_note_id,
+        type: shareType
+      }).then((res) => {
+        if (res.data.status === 0) {
+          store.commit("noteList", baseService.getNoteList());
+
+          if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
+            store.commit("noteListInTag", tagService.findNoteByNoteTagId(item.cn_note_label_id));
+          }
+
+          if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
+            store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
+          }
+          resolve(res.data.data);
+        } else {
+          reject();
+        }
+      });
+    });
+  }
 
 };
 

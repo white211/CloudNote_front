@@ -28,21 +28,30 @@
         <li v-for="item in noteList ">
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
-            <span class="note-creatTime">{{item.cn_note_createTime | formatDate}}</span>
-            <span class="note-content">
+            <span class="note-creatTime">{{item.cnNoteCreateTime | formatDate}}</span>
+            <span class="note-content" v-if="item.cnNoteIsEncrypt == 1">
               {{item.cn_note_content}}
             </span>
+            <span v-else>******</span>
           </div>
           <div class="note-detail-right">
-            <span class="fa fa-share-alt" title="分享笔记" @click="shareNote(item.cn_note_id)"
+
+            <span class="fa fa-share-alt" title="分享笔记" v-if="item.cnNoteIsShare == 1" @click="shareNote(item,0)"
                   v-clipboard:copy="message"
                   v-clipboard:success="onCopy"
                   v-clipboard:error="onError"></span>
+            <span class="fa fa-minus-circle" title="取消分享" v-else @click="shareNote(item,1)"></span>
 
             <span class="fa fa-star-o" title="收藏" v-if="item.cn_note_type_id !=2"
-                  @click="StoreNote(item.cn_note_id,2)"></span>
-            <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item.cn_note_id,1)"></span>
-            <span class="fa fa-trash-o" title="删除" @click="deleteNote(item.cn_note_id,4)"></span>
+                  @click="StoreNote(item,2)"></span>
+            <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item,1)"></span>
+
+            <span class="fa fa-lock" title="解密" v-if="item.cnNoteIsEncrypt == 0"
+                  @click="encrypt(item,1)"></span>
+            <span class="fa fa-unlock-alt" title="加密" v-else @click="encrypt(item,0)"></span>
+
+            <span class="fa fa-trash-o" title="删除" @click="deleteNote(item,4)"></span>
+
           </div>
         </li>
       </ul>
@@ -90,6 +99,10 @@
 
     methods: {
 
+      /**
+       *笔记的增删改查
+       */
+      //复制成功调用的方法
       onCopy() {
         swal({
           title: '',
@@ -104,45 +117,69 @@
           .then((res) => {
             swal({
               title: '',
-              text: '复制成功',
+              text: '已复制到粘贴板',
               icon: 'success',
               timer: 3000
             });
           });
       },
+      //复制失败调用的方法
       onError() {
         swal('复制失败', '请自动复制链接进行分享' + this.message, '');
       },
-      shareNote(noteId) {
+      shareNote(item, sharetype) {
         this.userId = store.state.user.cn_user_id;
-        this.noteId = noteId;
-        this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
+        this.noteId = item.cn_note_id;
+        this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + item.cn_note_id;
+        if (sharetype == 1) {
+          noteService.shareNote(item, sharetype).then((res) => {
+              swal({
+                title:'',
+                text:'已取消',
+                icon:'success',
+                timer:2000,
+              });
+          });
+        } else {
+          noteService.shareNote(item, sharetype);
+        }
       },
-      deleteNote(noteId, noteTypeId) {
-        noteService.deleteNote(noteId, noteTypeId);
+      deleteNote(item, noteTypeId) {
+        noteService.deleteNote(item, noteTypeId);
       },
-      StoreNote(noteId, noteTypeId) {
-        noteService.StoreNote(noteId, noteTypeId);
+      StoreNote(item, noteTypeId) {
+        noteService.StoreNote(item, noteTypeId);
+      },
+      encrypt(item, encrypyType) {
+        noteService.encrypt(item, encrypyType);
       },
       skim(value) {
-        this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+        noteService.skim(value).then((res) => {
+          if (res) {
+            this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+          }
+        });
       },
 
+      /**
+       * select选中时触发的事件
+       * @param command
+       */
       handleCommand(command) {
         //创建时间（最早优先）
         if (command === 'a') {
           this.list = store.state.main.noteList;
-          this.list.sort(this.compare('cn_note_createTime', 1));
+          this.list.sort(this.compare('cnNoteCreateTime', 1));
           store.commit("noteList", this.list);
           //创建时间（最新优先）
         } else if (command === 'b') {
           this.list = store.state.main.noteList;
-          this.list.sort(this.compare('cn_note_createTime', -1));
+          this.list.sort(this.compare('cnNoteCreateTime', -1));
           store.commit("noteList", this.list);
           //更新时间（最早优先）
         } else if (command === 'c') {
           this.list = store.state.main.noteList;
-          this.list.sort(this.compare('cn_note_updateTime', 1));
+          this.list.sort(this.compare('cnNoteUpdateTime', 1));
           store.commit("noteList", this.list);
           //更新时间（最新优先）
         } else {
@@ -150,6 +187,12 @@
         }
       },
 
+      /**
+       * 对笔记进行排序
+       * @param pro
+       * @param rev
+       * @returns {Function}
+       */
       compare(pro, rev) {
         if (rev) {
           rev = rev > 0 ? 1 : -1;
@@ -171,6 +214,9 @@
 
     },
 
+    /**
+     * 过滤器格式化时间
+     */
     filters: {
       formatDate(value) {
         if (!value) return '';
@@ -181,9 +227,11 @@
 
 
   };
+
 </script>
 
 <style scoped lang="stylus">
+
   .note
     display: flex
     flex-direction: column
@@ -251,7 +299,7 @@
             float: right
             height: 100px;
             width: 15px;
-            padding-top: 20px;
+            padding-top: 10px;
             opacity: 0
             text-align: center;
           &:hover .note-detail-right
@@ -277,4 +325,5 @@
         line-height: 20px;
         display: inline-block
         text-indent: 10px;
+
 </style>

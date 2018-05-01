@@ -11,6 +11,10 @@ import UpdatePass from '../components/home/user/updatePass';
 import UserInfo from '../components/home/user/userInfo';
 import Msg from '../components/home/user/msg';
 import ShareNote from '../components/home/note/shareNote';
+import UpdatePassNoLogin from '../components/updatePass';
+import FirstStep from '../components/updatePassStep/firstStep'
+import SecondStep from '../components/updatePassStep/secondStep';
+import ThirdStep from '../components/updatePassStep/thirdStep'
 
 Vue.use(Router);
 
@@ -18,21 +22,25 @@ Vue.use(Router);
 export default new Router({
   mode: 'history',
   routes: [
+
     {
       path: '/',
       name: 'Main',
       component: Main
     },
+
     {
       path: '/login',
       name: 'login',
       component: Login
     },
+
     {
       path: '/register',
       name: 'register',
       component: Register
     },
+
     {
       path: '/home',
       component: Home,
@@ -58,6 +66,27 @@ export default new Router({
           path: '/user/msg',
           component: Msg
         },
+
+      ]
+    },
+
+    {
+      path: '/updatePass',
+      component: UpdatePassNoLogin,
+      name: 'updatePassNoLogin',
+      redirect:'/updatePass/firstStep',
+      children: [{
+        path: '/updatePass/firstStep',
+        component: FirstStep
+      },
+        {
+          path:'/updatePass/secondStep',
+          component:SecondStep
+        },
+        {
+          path:'/updatePass/thirdStep',
+          component:ThirdStep
+        }
 
       ]
     },

@@ -43,6 +43,7 @@
   import store from '../../../store';
   import baseService from '../../../Service/baseService';
   import storeService from '../../../Service/storeService';
+  import noteService from '../../../Service/noteService'
 
   export default {
     data() {
@@ -60,7 +61,11 @@
       },
 
       skim(value) {
-        this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+        noteService.skim(value).then((res)=>{
+          if(res){
+            this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+          }
+        });
       },
 
     },

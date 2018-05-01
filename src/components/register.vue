@@ -80,7 +80,6 @@
 </template>
 
 <script>
-  // import axios from 'axios';
   import api from '../api';
   import swal from 'sweetalert';
 
@@ -128,6 +127,7 @@
 
 <style lang="stylus" scoped>
   #register
+    min-height: 100vh;
     #nav
       width: 1024px;
       margin: 0 auto;
@@ -178,7 +178,7 @@
             display: inline-block;
             font-size: 22px;
             border: 1px solid grey;
-            padding :5px 5px 5px 8px;
+            padding: 5px 5px 5px 8px;
             &::-webkit-input-placeholder
               font-size: 13px;
               color: #687b7c;

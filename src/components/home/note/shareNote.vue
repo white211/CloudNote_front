@@ -183,6 +183,10 @@
     methods: {
 
       mark(md) {
+        if(md == null || md == ''){
+          this.success = false;
+          return;
+        }
         return marked(md);
       },
 
@@ -368,8 +372,8 @@
               border-radius: 5px;
               font-size: 18px;
               resize: none
-              padding-left: 10px;
-              padding-right: 10px;
+              padding: 10px;
+
           .btn_com
             width: 700px;
             .com_btn

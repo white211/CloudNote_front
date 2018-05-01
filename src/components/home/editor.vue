@@ -80,7 +80,8 @@
               baseService.getNoteBookList();
               baseService.getNoteList();
               baseService.getTagList();
-                this.resetData();
+              this.resetData();
+              this.$router.replace({path: `/home/newNote`});
             });
           } else {
             swal(res.data.msg);
@@ -129,9 +130,8 @@
               this.noteContent = res.data.data.cn_note_content || '';
             this.noteId = res.data.data.cn_note_id || '';
           }
-
         }, (err) => {
-          console.log('cuowu', err);
+          console.log('错误', err);
         });
       }
 

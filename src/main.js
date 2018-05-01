@@ -35,10 +35,15 @@ import "vue-event-calendar/dist/style.css";
 
 import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
 
+
+import vueMove from 'vue-move'
+
+
 Vue.use(mavonEditor);
 Vue.use(clipboard);
 Vue.use(ElementUI);
 Vue.use(vueEventCalendar, {locale: 'en'});
+Vue.use(vueMove);
 
 Vue.config.productionTip = false;
 

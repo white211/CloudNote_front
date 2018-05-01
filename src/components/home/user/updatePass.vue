@@ -2,9 +2,22 @@
   <div class="updatePass">
     <span class="text">更新密码</span>
     <div class="updata-form">
+
+      <div class="item radioBtn">
+
+        <el-radio-group  v-model="PasswordType" @change="typeChange" fill="#67C23A" text-color="#FFFFFF">
+
+          <el-radio-button label="1">登录密码</el-radio-button>
+
+          <el-radio-button label="2">阅读密码</el-radio-button>
+
+        </el-radio-group>
+
+      </div>
+
       <div class="item">
         <label for="oldPass">旧密码:</label>
-        <input type="password" name="oldPass" id="oldPass" v-model="oldPass" @blur="checkOldPass"/>
+        <input type="password" :placeholder="Type" name="oldPass" id="oldPass" v-model="oldPass" @blur="blurOnPassWord"/>
       </div>
 
       <div class="item">
@@ -36,12 +49,39 @@
         oldPass: [],
         newPass: [],
         checkPass: [],
-        flag: false
+        flag: false,
+        PasswordType: '1',
+        Type:''
       };
     },
     methods: {
+   /**
+    * 单选按钮触发事件
+    * */
+      typeChange(label){
+        this.oldPass ='';
+        this.newPass ='';
+        this.checkPass = '';
+        if(label === '2' && store.state.user.cnNoteReadPassword !== ''){
+          this.Type ="初次修改，初始密码为‘111111’";
+        }else{
 
-      checkOldPass() {
+          this.Type = '';
+        }
+      },
+
+      /**
+      * 验证旧密码按钮触发事件
+      * */
+      blurOnPassWord() {
+        if (this.PasswordType === '1') {
+          this.checkOldPass('/user/checkOldPassword.do',1);
+        } else if(this.PasswordType === '2') {
+          this.checkOldPass('/user/checkOldPassword.do',2);
+        }
+      },
+
+      checkOldPass(url,type) {
         if (this.oldPass.length === 0) {
           swal({
             title: '',
@@ -50,9 +90,10 @@
             icon: 'error'
           });
         } else {
-          api.post('/user/checkOldPassword.do', {
-            email: store.state.user.cn_user_email,
-            oldPassword: this.oldPass
+          api.post(url, {
+            userId: store.state.user.cn_user_id,
+            oldPassword: this.oldPass,
+            type:type
           }).then((res) => {
             if (res.data.status !== 0) {
               swal({
@@ -60,6 +101,8 @@
                 text: '旧密码错误',
                 icon: 'error',
                 timer: 3000
+              }).then((res)=>{
+                this.oldPass ='';
               });
             } else {
               console.log(res);
@@ -67,29 +110,47 @@
           });
         }
       },
-
+     /**
+      * blur验证新密码
+      * */
       checkNewPass() {
 
         if (this.oldPass === this.newPass && this.newPass !== null) {
           swal({
             title: '',
             text: '新密码不能与旧密码相同',
-            timer: 3000,
+            timer: 2000,
             icon: 'error'
           }).then((res) => {
             this.newPass = [];
           });
         }
-        if (this.newPass.length < 6 || this.newPass.length > 20) {
+        if (this.newPass.length < 6 || this.newPass.length > 20 ) {
           swal({
             title: '',
             text: '新密码长度不能小于6或者大于20',
-            timer: 3000,
+            timer: 2000,
             icon: 'error'
+          }).then((res)=>{
+            this.newPass = [];
+          });
+        }
+
+        if(this.newPass ==='111111'){
+          swal({
+            title: '',
+            text: '新密码太简单',
+            timer: 2000,
+            icon: 'error'
+          }).then((res)=>{
+            this.newPass = [];
           });
         }
       },
 
+      /**
+       * blur验证第二次密码
+       * */
       CheckCheckPass() {
         if (this.checkPass !== this.newPass && this.checkPass !== null && this.newPass !== null) {
           swal({
@@ -101,6 +162,9 @@
         }
       },
 
+      /**
+      * 确认按钮触发事件
+      * */
       changPass() {
         if (this.oldPass.length === 0 || this.newPass.length === 0 || this.checkPass.length === 0) {
           swal({
@@ -110,25 +174,47 @@
             icon: 'error'
           });
         } else {
-          api.post('/user/resetPassword.do', {
-            email: store.state.user.cn_user_email,
-            oldPassword: this.oldPass,
-            newPassword: this.newPass
-          }).then((res) => {
-            if (res.data.status === 0) {
-              swal({
-                title: '修改成功',
-                text: ' 请重新登陆',
-                icon: 'success',
-                timer: 3000
-              }).then((res) => {
-                store.commit('user', null);
-                this.$router.push('/login');
-              });
-            }
-          });
+          if(this.PasswordType === '1' ){
+            api.post('/user/resetPassword.do', {
+              userId: store.state.user.cn_user_id,
+              oldPassword: this.oldPass,
+              newPassword: this.newPass,
+              type:1
+            }).then((res) => {
+              if (res.data.status === 0) {
+                swal({
+                  title: '修改成功',
+                  text: ' 请重新登陆',
+                  icon: 'success',
+                  timer: 3000
+                }).then((res) => {
+                  store.commit('user', null);
+                  this.$router.push('/login');
+                });
+              }
+            });
+          }else if(this.PasswordType === '2'){
+            api.post('/user/resetPassword.do', {
+              userId: store.state.user.cn_user_id,
+              oldPassword: this.oldPass,
+              newPassword: this.newPass,
+              type:2
+            }).then((res) => {
+              if (res.data.status === 0) {
+                store.commit("user",res.data.data);
+                swal({
+                  title: '',
+                  text: ' 修改成功',
+                  icon: 'success',
+                  timer: 3000
+                }).then((res) => {
+                  this.$router.push({path:'/home/newNote'});
+                });
+              }
+            });
+          }
         }
-      }
+      },
 
     },
 
@@ -152,21 +238,21 @@
       width: 800px;
       display: block
       padding-left: 50px;
-      padding-bottom: 50px;
+      padding-bottom: 20px;
     .item
       width: 800px;
-      height: 100px;
+      height: 80px;
       label
         width: 100px;
         text-align: right
-        user-select :none;
+        user-select: none;
       input[type=password]
         width: 600px;
-        height: 50px;
-        line-height: 50px;
+        height: 45px;
+        line-height: 45px;
         border: 1px solid #dce4ec
         border-radius: 5px;
-        font-size: 25px
+        font-size: 15px
         padding-left: 10px;
         &:focus
           border-radius: 5px;
@@ -184,5 +270,7 @@
         &:hover
           cursor: pointer;
           background-color: rgb(152, 217, 100);
+    .radioBtn
+      padding-left: 50px;
 
 </style>

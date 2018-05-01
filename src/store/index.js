@@ -28,7 +28,18 @@ const store = new Vuex.Store({
       noteBookStoreList: []
     },
     noteListInBook:[],
-    noteListInTag:[]
+    noteListInTag:[],
+    updatePass:{
+      firstStep:{
+        status:''
+      },
+      secondStep:{
+        status:''
+      },
+      thirdStep:{
+        status:''
+      }
+    }
   },
 
   mutations: {
@@ -75,7 +86,19 @@ const store = new Vuex.Store({
 
     noteListInTag(state,val){
       state.noteListInTag = val;
-    }
+    },
+
+    firstStepStatus(state,val){
+      state.updatePass.firstStep.status = val;
+    },
+
+    secondStepStatus(state,val){
+      state.updatePass.secondStep.status = val;
+    },
+
+    thirdStepStatus(state,val){
+      state.updatePass.thirdStep.status = val;
+    },
 
   },
 });

@@ -17,8 +17,8 @@
                aria-describedby="sizing-addon1">
       </div>
       <div class="Pass-text">
-        <input type="checkbox"/>记住密码
-        <a href="">忘记密码？</a>
+        <input type="checkbox"/>记住我
+        <router-link to="/updatePass">忘记密码？</router-link>
       </div>
       <div id="btn">
         <input type="button" name="login_btn" @click="login" id="login_btn" class="btn btn-success" value="登陆"/>

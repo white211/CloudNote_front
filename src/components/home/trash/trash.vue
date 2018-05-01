@@ -8,7 +8,7 @@
         <ul>
           <li v-for="item in noteTrashList">
             <div class="note-left">
-              <span class="fa fa-file-text-o"></span>
+              <span class="fa fa-file-text-o sign"></span>
               <span class="note-title">{{item.cn_note_title}}</span>
             </div>
             <div class="note-right">
@@ -22,7 +22,7 @@
         <ul>
           <li v-for="item in noteBookTrashList">
             <div class="book-left">
-              <span class="fa fa-book"></span>
+              <span class="fa fa-book sign"></span>
               <span class="book-title">{{item.cn_notebook_name}}</span>
             </div>
             <div class="book-right">
@@ -114,8 +114,18 @@
             .book-left
               float: left;
               display: inline-block
+              .sign
+                float :left;
+                line-height :30px;
+                height :30px;
               .book-title
-                overflow: hidden
+                width :260px;
+                height :30px;
+                float :left;
+                margin-left :5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space :nowrap;
             .book-right
               float: right;
               display: inline-block;
@@ -141,8 +151,18 @@
             .note-left
               float: left;
               display: inline-block;
+              .sign
+                float :left;
+                line-height :30px;
+                height :30px;
               .note-title
+                width :260px;
+                height :30px;
+                float :left;
+                margin-left :5px;
                 overflow: hidden;
+                text-overflow: ellipsis;
+                white-space :nowrap;
             .note-right
               float: right;
               display: inline-block;

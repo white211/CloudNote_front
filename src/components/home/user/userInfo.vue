@@ -53,7 +53,6 @@
         <el-cascader
           size="large"
           :options="options"
-
           v-model="selectedOptions"
           clearable
           :placeholder="user.address"
@@ -154,7 +153,6 @@
        if (this.selectedOptions.length !== 0){
          this.user.address = CodeToText[this.selectedOptions[0]]+CodeToText[this.selectedOptions[1]]+CodeToText[this.selectedOptions[2]];
        }
-
         api.post('/user/updateInfo.do', {
           userId: store.state.user.cn_user_id,
           nickname: this.user.nickName,

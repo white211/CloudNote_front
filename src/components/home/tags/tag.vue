@@ -67,21 +67,27 @@
         <li v-for="item in noteListInTag" v-if="item.cn_note_type_id !== 4">
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
-            <span class="note-creatTime">{{item.cn_note_createTime | formatDate}}</span>
+            <span class="note-creatTime">{{item.cnNoteCreateTime | formatDate}}</span>
             <span class="note-content">
               {{item.cn_note_content}}
             </span>
           </div>
           <div class="note-detail-right">
-            <span class="fa fa-share-alt" title="分享笔记" @click="shareNote(item.cn_note_id)"
+            <span class="fa fa-share-alt" title="分享笔记" v-if="item.cnNoteIsShare == 1" @click="shareNote(item,0)"
                   v-clipboard:copy="message"
                   v-clipboard:success="onCopy"
                   v-clipboard:error="onError"></span>
+            <span class="fa fa-minus-circle" title="取消分享" v-else @click="shareNote(item,1)"></span>
 
             <span class="fa fa-star-o" title="收藏" v-if="item.cn_note_type_id !=2"
-                  @click="StoreNote(item.cn_note_id,2)"></span>
-            <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item.cn_note_id,1)"></span>
-            <span class="fa fa-trash-o" title="删除" @click="deleteNote(item.cn_note_id,4)"></span>
+                  @click="StoreNote(item,2)"></span>
+            <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item,1)"></span>
+
+            <span class="fa fa-lock" title="解密" v-if="item.cnNoteIsEncrypt == 0"
+                  @click="encrypt(item,1)"></span>
+            <span class="fa fa-unlock-alt" title="加密" v-else @click="encrypt(item,0)"></span>
+
+            <span class="fa fa-trash-o" title="删除" @click="deleteNote(item,4)"></span>
           </div>
         </li>
       </ul>
@@ -189,10 +195,22 @@
       onError() {
         swal('复制失败', '请自动复制链接进行分享' + this.message, '');
       },
-      shareNote(noteId) {
+      shareNote(item,sharetype) {
         this.userId = store.state.user.cn_user_id;
-        this.noteId = noteId;
-        this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
+        this.noteId = item.cn_note_id;
+        this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + item.cn_note_id;
+        if (sharetype == 1) {
+          noteService.shareNote(item, sharetype).then((res) => {
+            swal({
+              title:'',
+              text:'已取消',
+              icon:'success',
+              timer:2000,
+            });
+          });
+        } else {
+          noteService.shareNote(item, sharetype);
+        }
       },
       deleteNote(noteId, noteTypeId) {
         noteService.deleteNote(noteId, noteTypeId).then((res)=>{
@@ -205,30 +223,39 @@
         });
       },
       skim(value) {
-        this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+        noteService.skim(value).then((res)=>{
+          if(res){
+            this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+          }
+        });
+      },
+      encrypt(item, encrypyType) {
+        noteService.encrypt(item, encrypyType).then((res)=>{
+          tagService.findNoteByNoteTagId(this.index);
+        });
       },
 
       handleCommand(command) {
         //创建时间（最早优先）
         if (command === 'a') {
           this.noteList = store.state.noteListInTag;
-          this.noteList.sort(this.compare('cn_note_createTime', 1));
+          this.noteList.sort(this.compare('cnNoteCreateTime', 1));
           store.commit("noteListInTag", this.noteList);
           //创建时间（最新优先）
         } else if (command === 'b') {
           this.noteList = store.state.noteListInTag;
-          this.noteList.sort(this.compare('cn_note_createTime', -1));
+          this.noteList.sort(this.compare('cnNoteCreateTime', -1));
           store.commit("noteListInTag",  this.noteList);
           //更新时间（最早优先）
         } else if (command === 'c') {
           this.noteList = store.state.noteListInTag;
-          this.noteList.sort(this.compare('cn_note_updateTime', -1));
+          this.noteList.sort(this.compare('cnNoteUpdateTime', -1));
           store.commit("noteListInTag",  this.noteList);
 
           //更新时间（最新优先）
         } else {
           this.noteList = store.state.noteListInTag;
-          this.noteList.sort(this.compare('cn_note_updateTime', 1));
+          this.noteList.sort(this.compare('cnNoteUpdateTime', 1));
           store.commit("noteListInTag",  this.noteList);
         }
       },
@@ -490,7 +517,7 @@
             height: 100px;
             width: 15px;
             text-align: center;
-            padding-top: 20px;
+            padding-top: 10px;
             opacity: 0
           &:hover .note-detail-right
             opacity: 1
