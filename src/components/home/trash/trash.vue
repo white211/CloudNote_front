@@ -12,7 +12,7 @@
               <span class="note-title">{{item.cn_note_title}}</span>
             </div>
             <div class="note-right">
-              <span class="fa fa-refresh" title="还原文件" @click="refresh(item.cn_note_id,1)"></span>
+              <span class="fa fa-refresh" title="还原文件" @click="refresh(item,1)"></span>
               <span class="fa fa-times-circle-o" title="彻底删除" @click="deleteExatly(item.cn_note_id,1)"></span>
             </div>
           </li>
@@ -26,7 +26,7 @@
               <span class="book-title">{{item.cn_notebook_name}}</span>
             </div>
             <div class="book-right">
-              <span class="fa fa-refresh" title="还原文件" @click="refresh(item.cn_notebook_id,2)"></span>
+              <span class="fa fa-refresh" title="还原文件" @click="refresh(item,2)"></span>
               <span class="fa fa-times-circle-o" title="彻底删除" @click="deleteExatly(item.cn_notebook_id,2)"></span>
             </div>
           </li>
@@ -54,8 +54,8 @@
 
     methods: {
 
-      refresh(id, type) {
-        trashService.refresh(id, type);
+      refresh(item, type) {
+        trashService.refresh(item, type);
       },
 
       deleteExatly(id, type) {

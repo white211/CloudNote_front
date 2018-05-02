@@ -2,6 +2,8 @@ import api from '../api';
 import store from '../store';
 import baseService from '../Service/baseService';
 import swal from "sweetalert";
+import notebookService from "./noetbookService";
+import tagService from "./tagService";
 
 const trashService = {
 
@@ -79,13 +81,13 @@ const trashService = {
    * @param type
    * @returns {Promise<any>}
    */
-  refresh(id, type) {
+  refresh(item, type) {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
       if (type === 1) {
         api.post('/note/updateNoteTypeId.do', {
-          noteId: id,
+          noteId: item.cn_note_id,
           noteTypeId: 1
         }).then((res) => {
           console.log(res);
@@ -103,6 +105,12 @@ const trashService = {
               store.commit("noteBookStoreList", baseService.findNoteBookInStore());
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("tagList", baseService.getTagList());
+              if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
+                store.commit("noteListInTag", tagService.findNoteByNoteTagId(item.cn_note_label_id));
+              }
+              if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
+                store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
+              }
               resolve(res.data.status);
             }).catch((error) => {
               if (error.response) reject(error.response.data);

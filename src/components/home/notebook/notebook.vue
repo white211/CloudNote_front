@@ -96,9 +96,9 @@
                   @click="StoreNote(item,2)"></span>
             <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item,1)"></span>
 
-            <span class="fa fa-lock" title="解密" v-if="item.cnNoteIsEncrypt == 0"
+            <span class="fa fa-unlock-alt" title="解密" v-if="item.cnNoteIsEncrypt == 0"
                   @click="encrypt(item,1)"></span>
-            <span class="fa fa-unlock-alt" title="加密" v-else @click="encrypt(item,0)"></span>
+            <span class="fa fa-lock" title="加密" v-else @click="encrypt(item,0)"></span>
 
             <span class="fa fa-trash-o" title="删除" @click="deleteNote(item,4)"></span>
           </div>
@@ -253,7 +253,6 @@
       deleteNote(noteId, noteTypeId) {
         noteService.deleteNote(noteId, noteTypeId).then((res)=>{
           notebookService.findNoteByNoteBookId(this.index);
-          this.$router.replace({path: `/home/newNote`});
         });
       },
       StoreNote(item, noteTypeId) {
@@ -294,7 +293,6 @@
           this.second.list = store.state.noteListInBook;
           this.second.list.sort(this.compare('cnNoteUpdateTime', -1));
           store.commit("noteListInBook", this.second.list);
-
           //更新时间（最新优先）
         } else {
           this.second.list = store.state.noteListInBook;
