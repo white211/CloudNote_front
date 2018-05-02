@@ -4,6 +4,10 @@ import baseService from '../Service/baseService';
 
 const noteBookService = {
 
+  /**
+   * 新建笔记本
+   * @returns {Promise<any>}
+   */
   newNoteBook() {
 
     return new Promise((resolve = () => {
@@ -47,6 +51,11 @@ const noteBookService = {
 
   },
 
+  /**
+   * 删除笔记本
+   * @param id
+   * @returns {Promise<any>}
+   */
   deleteNoteBook(id) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -63,7 +72,8 @@ const noteBookService = {
             api.post('/notebook/setNoteBookType.do', {
               userId: store.state.user.cn_user_id,
               noteBookId: id,
-              noteBookType: 4
+              noteBookType: 4,
+              updateType:1
             }).then((res) => {
               if (res.data.status === 0) {
                 swal("已经被删除，可到回收站找回", {
@@ -90,6 +100,12 @@ const noteBookService = {
     });
   },
 
+  /**
+   * 重命名笔记本名称
+   * @param id
+   * @param val
+   * @returns {Promise<any>}
+   */
   resetNoteBookName(id, val) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -138,6 +154,13 @@ const noteBookService = {
     });
   },
 
+  /**
+   * 收藏笔记本
+   * @param id
+   * @param type
+   * @returns {Promise<any>}
+   * @constructor
+   */
   Store(id, type) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -190,6 +213,11 @@ const noteBookService = {
     });
   },
 
+  /**
+   * 通过笔记本id查找笔记
+   * @param bookId
+   * @returns {Promise<any>}
+   */
   findNoteByNoteBookId(bookId){
     return new Promise((resolve =()=>{},reject=()=>{})=>{
       api.post('/note/findNoteByBookId.do',{

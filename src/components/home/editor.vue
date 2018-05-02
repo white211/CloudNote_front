@@ -59,7 +59,6 @@
         noteContent: '',
         noteId: '',
         data: '',
-        jjid: ''
       };
     },
 
@@ -120,7 +119,8 @@
 
       if (this.activeNoteId) {
         api.post('/note/findNoteById.do', {
-          noteId: this.activeNoteId
+          noteId: this.activeNoteId,
+          type:1
         }).then((res) => {
           if (res.data.status === 0) {
             this.noteLabelId = res.data.data.cn_note_label_id || '',
@@ -168,7 +168,8 @@
       activeNote(val) {
         if (val) {
           api.post('/note/findNoteById.do', {
-            noteId: val
+            noteId: val,
+            type:1
           }).then((res) => {
             this.noteLabelId = res.data.data.cn_note_label_id || '';
             this.noteBookId = res.data.data.cn_note_book_id || '';

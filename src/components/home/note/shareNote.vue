@@ -133,7 +133,10 @@
         this.comAvatar = store.state.user.cn_user_avatar;
       }
       //获取分享笔记的内容
-      api.post('/note/findNoteById.do', {noteId: this.$route.params.id})
+      api.post('/note/findNoteById.do', {
+        noteId: this.$route.params.id,
+        type:2
+      })
         .then((res) => {
           if (res.data.status === 0 && res.data.data !== null) {
             this.success = true;

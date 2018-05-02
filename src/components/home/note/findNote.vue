@@ -19,20 +19,28 @@
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
             <span class="note-creatTime">{{item.cn_note_creatTime}}</span>
-            <span class="note-content">
+            <span class="note-content" v-if="item.cnNoteIsEncrypt == 1">
               {{item.cn_note_content}}
             </span>
+            <span v-else>******</span>
           </div>
           <div class="note-detail-right">
-            <span class="fa fa-share-alt" title="分享笔记" @click="shareNote(item.cn_note_id)"
+            <span class="fa fa-share-alt" title="分享笔记" v-if="item.cnNoteIsShare == 1" @click="shareNote(item,0)"
                   v-clipboard:copy="message"
                   v-clipboard:success="onCopy"
                   v-clipboard:error="onError"></span>
+            <span class="fa fa-minus-circle" title="取消分享" v-else @click="shareNote(item,1)"></span>
 
             <span class="fa fa-star-o" title="收藏" v-if="item.cn_note_type_id !=2"
-                  @click="StoreNote(item.cn_note_id,2)"></span>
-            <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item.cn_note_id,1)"></span>
-            <span class="fa fa-trash-o" title="删除" @click="deleteNote(item.cn_note_id,4)"></span>
+                  @click="StoreNote(item,2)"></span>
+            <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item,1)"></span>
+
+            <span class="fa fa-lock" title="解密" v-if="item.cnNoteIsEncrypt == 0"
+                  @click="encrypt(item,1)"></span>
+            <span class="fa fa-unlock-alt" title="加密" v-else @click="encrypt(item,0)"></span>
+
+            <span class="fa fa-trash-o" title="删除" @click="deleteNote(item,4)"></span>
+
           </div>
         </li>
       </ul>
@@ -47,6 +55,7 @@
 <script>
   import store from '../../../store';
   import noteService from '../../../Service/noteService';
+  import notebookService from '../../../Service/noetbookService';
   import baseService from '../../../Service/baseService';
 
   export default {
@@ -62,6 +71,10 @@
     },
 
     methods: {
+      /**
+       * 笔记的增删改查
+       */
+      //复制分享链接
       onCopy() {
         swal({
           title: '',
@@ -85,20 +98,52 @@
       onError() {
         swal('复制失败', '请自动复制链接进行分享' + this.message, '');
       },
-      shareNote(noteId) {
+      shareNote(item,sharetype) {
         this.userId = store.state.user.cn_user_id;
-        this.noteId = noteId;
-        this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + noteId;
+        this.noteId = item.cn_note_id;
+        this.message = window.location.origin + '/note/shareNote/' + this.userId + '/' + item.cn_note_id;
+        if (sharetype == 1) {
+          noteService.shareNote(item, sharetype).then((res) => {
+            swal({
+              title:'',
+              text:'已取消',
+              icon:'success',
+              timer:2000,
+            });
+          });
+        } else {
+          noteService.shareNote(item, sharetype);
+        }
       },
+      //删除笔记
       deleteNote(noteId, noteTypeId) {
-        noteService.deleteNote(noteId, noteTypeId);
+        noteService.deleteNote(noteId, noteTypeId).then((res)=>{
+          notebookService.findNoteByNoteBookId(this.index);
+          this.$router.replace({path: `/home/newNote`});
+        });
       },
-      StoreNote(noteId, noteTypeId) {
-        noteService.StoreNote(noteId, noteTypeId);
+      //收藏笔记
+      StoreNote(item, noteTypeId) {
+        noteService.StoreNote(item, noteTypeId).then((res)=>{
+          notebookService.findNoteByNoteBookId(this.index);
+        });
       },
+      //浏览笔记
       skim(value) {
-        this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
-      }
+        noteService.skim(value).then((res)=>{
+          if(res){
+            this.$router.push({path: `/home/newNote/${value.cn_note_id}`});
+          }
+        });
+      },
+      //加密笔记
+      encrypt(item, encrypyType) {
+        noteService.encrypt(item, encrypyType).then((res)=>{
+          notebookService.findNoteByNoteBookId(this.index);
+        });
+      },
+
+
     },
 
     mounted() {
@@ -112,6 +157,7 @@
     },
 
     watch: {
+
       searchText(value) {
         if (this.select && value) {
           noteService.SearchText(value, this.select).then((res) => {
@@ -125,6 +171,7 @@
           this.noteList = [];
         }
       },
+
 
 
     }
@@ -211,9 +258,10 @@
           .note-detail-right
             float: right
             height: 100px;
-            width: 10px;
-            padding-top: 20px;
+            width: 15px;
+            padding-top: 10px;
             opacity: 0
+            text-align :center;
           &:hover .note-detail-right
             opacity: 1
             transition: all .5s

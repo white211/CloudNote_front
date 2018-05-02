@@ -5,7 +5,12 @@ import swal from "sweetalert";
 
 const trashService = {
 
-  //彻底删除垃圾箱中笔记和笔记本
+  /**
+   *彻底删除垃圾箱中笔记和笔记本
+   * @param id
+   * @param type
+   * @returns {Promise<any>}
+   */
   deleteExatly(id, type) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -68,7 +73,12 @@ const trashService = {
       ;
   },
 
-  //回复垃圾箱中的笔记和笔记本
+  /**
+   *回复垃圾箱中的笔记和笔记本
+   * @param id
+   * @param type
+   * @returns {Promise<any>}
+   */
   refresh(id, type) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -104,7 +114,8 @@ const trashService = {
         api.post('/notebook/setNoteBookType.do', {
           userId: store.state.user.cn_user_id,
           noteBookId: id,
-          noteBookType: 1
+          noteBookType: 1,
+          updateType:1
         }).then((res) => {
           console.log(res);
           if (res.data.status === 0) {

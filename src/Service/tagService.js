@@ -4,7 +4,9 @@ import baseService from "./baseService";
 
 const tagService = {
 
-  //新建标签
+  /**
+   * 新建标签
+   */
   newLabel() {
     swal({
       title: "新建标签",
@@ -42,7 +44,11 @@ const tagService = {
       });
   },
 
-  //删除标签
+  /**
+   * 删除标签
+   * @param id
+   * @returns {Promise<any>}
+   */
   deleteLabel(id) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -82,7 +88,12 @@ const tagService = {
     });
   },
 
-  //重命名标签
+  /**
+   *重命名标签
+   * @param id
+   * @param val
+   * @returns {Promise<any>}
+   */
   resetName(id, val) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -130,7 +141,11 @@ const tagService = {
     });
   },
 
-  //通过标签id查找笔记
+  /**
+   *通过标签id查找笔记
+   * @param id
+   * @returns {Promise<any>}
+   */
   findNoteByNoteTagId(id) {
     return new Promise((resolve = () => {
     }, reject = () => {

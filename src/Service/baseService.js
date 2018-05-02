@@ -3,7 +3,10 @@ import store from '../store';
 
 
 const baseService = {
-
+  /**
+   * 获取笔记本列表
+   * @returns {Promise<any>}
+   */
   getNoteBookList() {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -22,7 +25,10 @@ const baseService = {
         });
     });
   },
-
+  /**
+   * 获取笔记列表
+   * @returns {Promise<any>}
+   */
   getNoteList() {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -42,6 +48,10 @@ const baseService = {
     });
   },
 
+  /**
+   * 获取标签列表
+   * @returns {Promise<any>}
+   */
   getTagList() {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -57,6 +67,10 @@ const baseService = {
     });
   },
 
+  /**
+   *获取垃圾箱中的笔记列表
+   * @returns {Promise<any>}
+   */
   findNoteInTrash() {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -79,6 +93,10 @@ const baseService = {
     });
   },
 
+  /**
+   * 获取垃圾箱中的笔记本列表
+   * @returns {Promise<any>}
+   */
   findNoteBookInTrash() {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -101,6 +119,10 @@ const baseService = {
     });
   },
 
+  /**
+   * 获取收藏列表中的笔记
+   * @returns {Promise<any>}
+   */
   findNoteInStore() {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -123,6 +145,10 @@ const baseService = {
     });
   },
 
+  /**
+   * 获取收藏列表中的笔记本列表
+   * @returns {Promise<any>}
+   */
   findNoteBookInStore() {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -145,6 +171,11 @@ const baseService = {
     });
   },
 
+  /**
+   * 通过城市获取天气
+   * @param city
+   * @returns {Promise<any>}
+   */
   getWeather(city) {
     return new Promise((resolve = () => {
     }, reject = () => {

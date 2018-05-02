@@ -80,9 +80,10 @@
           <div class="note-detail-left" @click="skim(item)">
             <span class="note-title">{{item.cn_note_title}}</span>
             <span class="note-creatTime">{{item.cnNoteCreateTime | formatDate}}</span>
-            <span class="note-content">
+            <span class="note-content" v-if="item.cnNoteIsEncrypt == 1">
               {{item.cn_note_content}}
             </span>
+            <span v-else>******</span>
           </div>
           <div class="note-detail-right">
              <span class="fa fa-share-alt" title="分享笔记" v-if="item.cnNoteIsShare == 1" @click="shareNote(item,0)"
@@ -252,6 +253,7 @@
       deleteNote(noteId, noteTypeId) {
         noteService.deleteNote(noteId, noteTypeId).then((res)=>{
           notebookService.findNoteByNoteBookId(this.index);
+          this.$router.replace({path: `/home/newNote`});
         });
       },
       StoreNote(item, noteTypeId) {

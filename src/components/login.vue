@@ -16,14 +16,19 @@
         <input v-model="password" type="password" class="form-control" placeholder="Password"
                aria-describedby="sizing-addon1">
       </div>
+
       <div class="Pass-text">
-        <input type="checkbox"/>记住我
+        <!--<input type="checkbox"/>记住我-->
         <router-link to="/updatePass">忘记密码？</router-link>
       </div>
+
       <div id="btn">
+
         <input type="button" name="login_btn" @click="login" id="login_btn" class="btn btn-success" value="登陆"/>
+
         <router-link to="/register" type="button" name="register_btn" id="register_btn" class="btn btn-danger">注册
         </router-link>
+
       </div>
 
     </div>

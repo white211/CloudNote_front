@@ -235,7 +235,8 @@
 
       if (this.activeNoteId) {
         api.post('/note/findNoteById.do', {
-          noteId: this.activeNoteId
+          noteId: this.activeNoteId,
+          type:1
         }).then((res) => {
           this.noteLabelId = res.data.data.cn_note_label_id,
             this.noteBookId = res.data.data.cn_note_book_id,

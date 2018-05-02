@@ -4,7 +4,13 @@ import baseService from "./baseService";
 
 const storeService = {
 
-  //取消收藏
+  /**
+   * 取消收藏
+   * @param id
+   * @param type
+   * @returns {Promise<any>}
+   * @constructor
+   */
   Cancel(id, type) {
     return new Promise((resolve = () => {
     }, reject = () => {

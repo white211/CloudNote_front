@@ -6,7 +6,12 @@ import notebookService from './noetbookService';
 
 const noteService = {
 
-  //删除笔记
+  /**
+   * 删除笔记
+   * @param item
+   * @param noteTypeId
+   * @returns {Promise<any>}
+   */
   deleteNote(item, noteTypeId) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -62,7 +67,13 @@ const noteService = {
 
   },
 
-  //收藏笔记
+  /**
+   * 收藏笔记
+   * @param item
+   * @param noteTypeId
+   * @returns {Promise<any>}
+   * @constructor
+   */
   StoreNote(item, noteTypeId) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -125,7 +136,13 @@ const noteService = {
 
   },
 
-  //通过相似笔记标题和笔记内容查找相应笔记本中的内容
+  /**
+   * 通过相似笔记标题和笔记内容查找相应笔记本中的内容
+   * @param val
+   * @param Id
+   * @returns {Promise<any>}
+   * @constructor
+   */
   SearchText(val, Id) {
     return new Promise((resolve = () => {
     }, reject = () => {
@@ -152,6 +169,9 @@ const noteService = {
 
   /**
    * 加密解密笔记
+   * @param item
+   * @param encryptType
+   * @returns {Promise<any>}
    */
   encrypt(item, encryptType) {
     return new Promise((resolve = () => {
@@ -273,6 +293,12 @@ const noteService = {
     });
   },
 
+  /**
+   * 分享笔记的操作
+   * @param item
+   * @param shareType
+   * @returns {Promise<any>}
+   */
   shareNote(item, shareType) {
     return new Promise((resolve = () => {
     }, reject = () => {

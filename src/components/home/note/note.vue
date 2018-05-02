@@ -145,7 +145,9 @@
         }
       },
       deleteNote(item, noteTypeId) {
-        noteService.deleteNote(item, noteTypeId);
+        noteService.deleteNote(item, noteTypeId).then((res)=>{
+          this.$router.replace({path: `/home/newNote`});
+        });
       },
       StoreNote(item, noteTypeId) {
         noteService.StoreNote(item, noteTypeId);
