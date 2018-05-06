@@ -220,7 +220,7 @@
               });
             });
           } else {
-            swal('', res.data.msg, 'error');
+            swal('', res.msg, 'error');
           }
         });
       }

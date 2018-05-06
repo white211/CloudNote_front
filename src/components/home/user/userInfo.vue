@@ -1,21 +1,29 @@
 <template>
   <div class="userInfo">
     <div class="right">
-      <div class="weather">
+
+      <div class="weather" v-if="getWeather">
         <div class="weather-top">
           <span class="city">{{weather.city}}</span>
-          <span class="time">{{weather.time | getTime}} 发布</span>
+          <span class="time">{{weather.time}} </span>
         </div>
         <div class="weather-center">
           <div class="img">
             <img :src="weather.url" alt=""/>
           </div>
           <div class="wendu">
-            <span class="number">{{weather.temp}} &#8451;</span>
+            <span class="number">{{weather.temp}}</span>
             <span class="status">{{weather.text}}</span>
+            <!--&#8451;-->
           </div>
         </div>
-        <span></span>
+      </div>
+
+      <div class="weather" v-else>
+        <div class="refresh">
+          <span>获取天气失败，点击刷新</span>
+          <span class="fa fa-refresh" @click="regetweather()"></span>
+        </div>
       </div>
 
       <div class="cal">
@@ -110,6 +118,7 @@
           temp: '',
           text: '',
         },
+        getWeather:'',
         demoEvents: [],
         user: {
           email: '',
@@ -127,23 +136,19 @@
 
     mounted() {
 
-      baseService.getWeather("广州").then((res) => {
-        this.weather.url = "http://oxdypxsie.bkt.clouddn.com/weather" + res.now.code + ".png";
-        this.weather.temp = res.now.temperature;
-        this.weather.text = res.now.text;
-        this.weather.time = res.last_update;
-        this.weather.city = res.location.name;
+      baseService.getWeather().then((res) => {
+        if(res){
+          this.getWeather = true;
+          this.weather.url = "http://oxdypxsie.bkt.clouddn.com/weather" + res.now.code + ".png";
+          this.weather.temp = res.now.temperature+"°C";
+          this.weather.text = res.now.text;
+          this.weather.time = this.getTime(res.last_update)+" "+"发布";
+          this.weather.city = res.location.name;
+        }else{
+          this.getWeather = false;
+        }
       });
-
       this.loadUserInfo();
-    },
-
-    filters: {
-      getTime: function (value) {
-        if (!value) return '';
-        value = value.toString();
-        return value.split("T")[1].split("+")[0];
-      }
     },
 
     methods: {
@@ -172,7 +177,7 @@
             });
           } else {
             swal({
-              text: res.data.msg,
+              text: res.msg,
               title: '',
               icon: 'error',
               timer: 3000
@@ -206,6 +211,27 @@
         console.log(value);
       },
 
+      getTime: function (value) {
+        if (!value) return '';
+        value = value.toString();
+        return value.split("T")[1].split("+")[0];
+      },
+
+      regetweather(){
+        baseService.getWeather().then((res) => {
+          if(res){
+            this.getWeather = true;
+            this.weather.url = "http://oxdypxsie.bkt.clouddn.com/weather" + res.now.code + ".png";
+            this.weather.temp = res.now.temperature+"°C";
+            this.weather.text = res.now.text;
+            this.weather.time = this.getTime(res.last_update)+" "+"发布";
+            this.weather.city = res.location.name;
+          }else{
+            this.getWeather = false;
+          }
+        });
+      }
+
     },
 
 
@@ -234,6 +260,11 @@
         padding-left: 10px;
         border-radius: 5px;
         display: block;
+        .refresh
+          font-size :15px;
+          height:180px;
+          line-height :180px;
+          text-align :center;
         .weather-top
           height: 60px;
           width: 270px;
@@ -274,6 +305,7 @@
         display: block;
         margin-top: 20px;
         border-radius: 5px;
+
     .left
       width: 810px;
       height: 600px;

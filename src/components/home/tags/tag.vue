@@ -84,7 +84,7 @@
                   @click="StoreNote(item,2)"></span>
             <span class="fa fa-star" title="取消收藏" v-else @click="StoreNote(item,1)"></span>
 
-            <span class="fa fa-unlock-altf" title="解密" v-if="item.cnNoteIsEncrypt == 0"
+            <span class="fa fa-unlock-alt" title="解密" v-if="item.cnNoteIsEncrypt == 0"
                   @click="encrypt(item,1)"></span>
             <span class="fa a-lock" title="加密" v-else @click="encrypt(item,0)"></span>
 

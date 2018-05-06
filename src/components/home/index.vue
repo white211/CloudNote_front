@@ -191,8 +191,19 @@
     methods: {
 
       logout() {
-        store.commit('user', null);
+
         swal('已经退出登陆', '', 'success').then((res) => {
+          store.commit('user', null);
+          store.commit('token',null);
+          store.commit("tagList", '');
+          store.commit("noteList", '');
+          store.commit("noteBookList", '');
+          store.commit("noteTrashList", '');
+          store.commit("noteBookTrashList", '');
+          store.commit("noteStoreList", '');
+          store.commit("noteBookStoreList", '');
+          store.commit("noteListInBook",'');
+          store.commit("noteListInTag",'');
           this.$router.push({path: '/login'});
         });
       },
@@ -210,7 +221,10 @@
           url: 'http://127.0.0.1:8080/user/updataAvatar.do',
           method: 'post',
           data: formdata,
-          headers: {'Content-Type': 'multipart/form-data'},
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization':store.state.token
+          },
         }).then((res) => {
           if (res.data.status === 0) {
             var url = res.data.data;

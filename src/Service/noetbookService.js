@@ -36,7 +36,7 @@ const noteBookService = {
                 swal({
                   title: '创建成功',
                   icon: 'success',
-                  timer: 3000,
+                  timer: 2000,
                 }).then(value => {
                   store.commit("noteBookList", baseService.getNoteBookList());
                   resolve(res.data.data);
@@ -75,10 +75,12 @@ const noteBookService = {
               noteBookType: 4,
               updateType:1
             }).then((res) => {
+              // console.log(res);
+              if (!res) return;
               if (res.data.status === 0) {
                 swal("已经被删除，可到回收站找回", {
                   icon: "success",
-                  timer: 3000
+                  timer: 2000
                 }).then(value => {
                   store.commit("noteBookList", baseService.getNoteBookList());
                   store.commit("noteList", baseService.getNoteList());
@@ -90,8 +92,12 @@ const noteBookService = {
                   resolve(res.data.data);
                 });
               } else {
-                swal("删除失败", {
-                  icon: "error",
+                swal({
+                  title:'',
+                  text:'删除失败',
+                  icon:'error',
+                  timer:2000,
+                  button:false
                 });
               }
             });
@@ -147,7 +153,7 @@ const noteBookService = {
                 resolve(res.data.data);
               });
             } else {
-              swal('重命名失败', res.data.msg, 'error');
+              swal('重命名失败', res.msg, 'error');
             }
           });
         });
@@ -174,7 +180,7 @@ const noteBookService = {
           if (res.data.status === 0) {
             swal({
               title: '已取消收藏',
-              timer: 3000,
+              timer: 2000,
               icon: 'success'
             }).then(value => {
               store.commit("noteBookList", baseService.getNoteBookList());
@@ -185,7 +191,7 @@ const noteBookService = {
           } else {
             swal({
               title: '取消收藏失败',
-              timer: 3000,
+              timer: 2000,
               icon: 'error'
             });
           }
@@ -193,7 +199,7 @@ const noteBookService = {
           if (res.data.status === 0) {
             swal({
               title: '收藏成功',
-              timer: 3000,
+              timer: 2000,
               icon: 'success'
             }).then(value => {
               store.commit("noteBookList", baseService.getNoteBookList());
@@ -204,7 +210,7 @@ const noteBookService = {
           } else {
             swal({
               title: '收藏失败',
-              timer: 3000,
+              timer: 2000,
               icon: 'error'
             });
           }

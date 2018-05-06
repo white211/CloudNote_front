@@ -17,27 +17,26 @@
                aria-describedby="sizing-addon1">
       </div>
 
-      <div class="Pass-text">
-        <!--<input type="checkbox"/>记住我-->
-        <router-link to="/updatePass">忘记密码？</router-link>
-      </div>
+      <!--<div class="Pass-text">-->
+      <!--<router-link to="/updatePass">忘记密码？</router-link>-->
+      <!--</div>-->
 
       <div id="btn">
 
-        <input type="button" name="login_btn" @click="login" id="login_btn" class="btn btn-success" value="登陆"/>
-
-        <router-link to="/register" type="button" name="register_btn" id="register_btn" class="btn btn-danger">注册
-        </router-link>
+        <el-button type="info" plain name="login_btn" @click="login" id="login_btn">登录</el-button>
 
       </div>
 
-    </div>
+      <div style="border: 0.5px solid rgba(0,0,0,0.1);margin-top: 50px;width: 500px;margin-left: 50px;"></div>
 
-    <!--<div id="bottom">-->
-    <!--<span>-->
-    <!--<span class="glyphicon glyphicon-copyright-mark"></span>仲恺农业工程学院计算科学学院 粤ICP证510550号      违法和不良信息举报电话：188-141-42741-->
-    <!--</span>-->
-    <!--</div>-->
+      <div id="gateRouter">
+        <span><router-link to="/register"  id="register_btn">注册账号
+          </router-link></span>
+        <span>|</span>
+        <span><router-link to="/updatePass">忘记密码？</router-link></span>
+      </div>
+
+    </div>
 
   </div>
 </template>
@@ -46,6 +45,7 @@
   import api from '../api';
   import store from '../store';
   import swal from 'sweetalert';
+  import baseService from '../Service/baseService';
 
   export default {
     name: 'Login',
@@ -65,7 +65,21 @@
           if (response.data.status === 0) {
             //登陆成功之后将数据保存到store上面
             store.commit('user', response.data.data);
-            swal("登陆成功", '', 'success').then((res) => {
+            store.commit('token', response.data.data.cn_user_token);
+            store.commit("tagList", baseService.getTagList());
+            store.commit("noteList", baseService.getNoteList());
+            store.commit("noteBookList", baseService.getNoteBookList());
+            store.commit("noteTrashList", baseService.findNoteInTrash());
+            store.commit("noteBookTrashList", baseService.findNoteBookInTrash());
+            store.commit("noteStoreList", baseService.findNoteInStore());
+            store.commit("noteBookStoreList", baseService.findNoteBookInStore());
+            swal({
+              text:"登陆成功",
+              title:'',
+              icon:'success',
+              button:false,
+              timer:1500
+            }).then((res) => {
               this.$router.push({path: '/home'});
             });
           } else {
@@ -111,8 +125,14 @@
         margin-top: 20px;
         #login_btn
           margin-right: 20px;
-        #register_btn
-          margin-right: 20px;
+          width: 500px;
+          height: 45px;
+          font-size: 15px;
+      #gateRouter
+        width :600px;
+        text-align :center;
+        height :50px;
+        line-height :50px;
     #bottom
       position: absolute;
       bottom: 0;

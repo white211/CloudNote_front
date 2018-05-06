@@ -27,6 +27,8 @@ const trashService = {
               text: '彻底删除成功',
               icon: 'success',
               closeOnClickOutside: false,
+              timer:2000,
+              button:false
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -35,7 +37,7 @@ const trashService = {
               store.commit("noteBookStoreList", baseService.findNoteBookInStore());
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("tagList", baseService.getTagList());
-              resolve(res.data.status);
+              resolve(res.data.data);
             })
               .catch((error) => {
                 if (error.response) reject(error.response.data);
@@ -53,6 +55,8 @@ const trashService = {
               text: '彻底删除成功',
               icon: 'success',
               closeOnClickOutside: false,
+              timer:2000,
+              button:false
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -61,7 +65,7 @@ const trashService = {
               store.commit("noteBookStoreList", baseService.findNoteBookInStore());
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("tagList", baseService.getTagList());
-              resolve(res.data.status);
+              resolve(res.data.data);
             })
               .catch((error) => {
                 if (error.response) reject(error.response.data);
@@ -96,7 +100,9 @@ const trashService = {
               title: '',
               text: '已还原到笔记列表',
               icon: 'success',
+              timer:2000,
               closeOnClickOutside: false,
+              button:false
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -111,7 +117,7 @@ const trashService = {
               if (item.cn_note_book_id !== '' && item.cn_note_book_id !== null) {
                 store.commit("noteListInBook", notebookService.findNoteByNoteBookId(item.cn_note_book_id));
               }
-              resolve(res.data.status);
+              resolve(res.data.data);
             }).catch((error) => {
               if (error.response) reject(error.response.data);
             });
@@ -121,7 +127,7 @@ const trashService = {
       } else if (type === 2) {
         api.post('/notebook/setNoteBookType.do', {
           userId: store.state.user.cn_user_id,
-          noteBookId: id,
+          noteBookId: item.cn_notebook_id,
           noteBookType: 1,
           updateType:1
         }).then((res) => {
@@ -130,7 +136,9 @@ const trashService = {
             swal({
               title: '',
               text: '已还原到笔记本列表',
-              icon: 'success'
+              icon: 'success',
+              button:false,
+              timer:2000,
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -139,7 +147,7 @@ const trashService = {
               store.commit("noteBookStoreList", baseService.findNoteBookInStore());
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("tagList", baseService.getTagList());
-              resolve(res.data.status);
+              resolve(res.data.data);
             }).catch((error) => {
               if (error.response) reject(error.response.data);
             });

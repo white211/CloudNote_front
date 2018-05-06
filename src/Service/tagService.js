@@ -31,13 +31,13 @@ const tagService = {
               swal({
                 title: '创建成功',
                 icon: 'success',
-                timer: 3000,
+                timer: 2000,
               }).then(value => {
                 store.commit("tagList", baseService.getTagList());
                 resolve(res.data.data);
               });
             } else {
-              swal('创建失败', res.data.msg, 'error');
+              swal('创建失败', res.msg, 'error');
             }
           });
         }
@@ -69,7 +69,7 @@ const tagService = {
               if (res.data.status === 0) {
                 swal("该标签已经被删除", {
                   icon: "success",
-                  timer: 3000
+                  timer: 2000
                 }).then(value => {
                   store.commit("tagList", baseService.getTagList());
                   store.commit("noteList", baseService.getNoteList());
@@ -134,7 +134,7 @@ const tagService = {
                 resolve(res.data.data);
               });
             } else {
-              swal('重命名失败', res.data.msg, 'error');
+              swal('重命名失败', res.msg, 'error');
             }
           });
         });

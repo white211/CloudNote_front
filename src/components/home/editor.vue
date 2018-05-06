@@ -83,7 +83,7 @@
               this.$router.replace({path: `/home/newNote`});
             });
           } else {
-            swal(res.data.msg);
+            swal(res.msg);
           }
         });
       },
@@ -97,7 +97,10 @@
           url: 'http://127.0.0.1:8080/note/uploadFile.do',
           method: 'post',
           data: formdata,
-          headers: {'Content-Type': 'multipart/form-data'},
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization':store.state.token
+          },
         }).then((res) => {
           var url = res.data.data;
           this.$refs.md.$img2Url(pos, url);

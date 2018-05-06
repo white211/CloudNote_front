@@ -61,7 +61,7 @@ const baseService = {
       }).then((res) => {
         if (res.data.status === 0) {
           store.commit("tagList", res.data.data);
-          resolve(res.data.data);
+          resolve(res);
         }
       });
     });
@@ -108,7 +108,7 @@ const baseService = {
         .then((res) => {
           if (res.data.status === 0) {
             store.commit("noteBookTrashList", res.data.data);
-            resolve(res.data.data);
+            resolve(res.data);
           } else {
             reject(res);
           }
@@ -176,12 +176,12 @@ const baseService = {
    * @param city
    * @returns {Promise<any>}
    */
-  getWeather(city) {
+  getWeather() {
     return new Promise((resolve = () => {
     }, reject = () => {
     }) => {
       api.post('/user/getWeather.do', {
-        city: city
+        // city: city
       }).then((res) => {
         if (res.data.status === 0) {
           resolve(res.data.data.results[0]);

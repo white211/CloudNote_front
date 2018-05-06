@@ -32,7 +32,8 @@ const noteService = {
               if (res.data.status === 0) {
                 swal("已经被删除，可到回收站找回", {
                   icon: "success",
-                  timer: 3000
+                  timer: 2000,
+                  button:false
                 }).then(value => {
                   store.commit("tagList", baseService.getTagList());
                   store.commit("noteList", baseService.getNoteList());
@@ -50,8 +51,15 @@ const noteService = {
                   resolve(res.data.data);
                 });
               } else {
-                swal("删除失败", {
-                  icon: "error",
+                // swal("删除失败", {
+                //   icon: "error",
+                // });
+                swal({
+                  title:"",
+                  text:"删除失败",
+                  icon:"error",
+                  timer:2000,
+                  button:false
                 });
                 reject(res);
               }
@@ -86,8 +94,9 @@ const noteService = {
           if (res.data.status === 0) {
             swal({
               title: '已取消收藏',
-              timer: 3000,
-              icon: 'success'
+              timer: 2000,
+              icon: 'success',
+              button:false
             }).then(value => {
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("noteList", baseService.getNoteList());
@@ -102,16 +111,18 @@ const noteService = {
           } else {
             swal({
               title: '取消收藏失败',
-              timer: 3000,
-              icon: 'error'
+              timer: 2000,
+              icon: 'error',
+              button:false
             });
           }
         } else if (noteTypeId == 2) {
           if (res.data.status === 0) {
             swal({
               title: '收藏成功',
-              timer: 3000,
-              icon: 'success'
+              timer: 2000,
+              icon: 'success',
+              button:false
             }).then(value => {
               store.commit("noteStoreList", baseService.findNoteInStore());
               store.commit("noteList", baseService.getNoteList());
@@ -126,8 +137,9 @@ const noteService = {
           } else {
             swal({
               title: '收藏失败',
-              timer: 3000,
-              icon: 'error'
+              timer: 2000,
+              icon: 'error',
+              button:false
             });
           }
         }
@@ -187,7 +199,8 @@ const noteService = {
               title: '',
               text: '已加密',
               icon: 'success',
-              timer: 2000
+              timer: 2000,
+              button:false
             }).then(value => {
               store.commit("noteList", baseService.getNoteList());
               if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
@@ -203,7 +216,8 @@ const noteService = {
               title: '',
               text: '加密失败',
               icon: 'error',
-              timer: 2000
+              timer: 2000,
+              button:false
             });
           }
         } else if (encryptType == 1) {
@@ -212,7 +226,8 @@ const noteService = {
               title: '',
               text: '已取消加密',
               icon: 'success',
-              timer: 2000
+              timer: 2000,
+              button:false
             }).then(value => {
               store.commit("noteList", baseService.getNoteList());
               if (item.cn_note_label_id !== '' && item.cn_note_label_id !== null) {
@@ -228,7 +243,8 @@ const noteService = {
               title: '',
               text: '取消加密失败',
               icon: 'error',
-              timer: 2000
+              timer: 2000,
+              button:false
             });
           }
         }
@@ -277,7 +293,8 @@ const noteService = {
                 title: '',
                 text: '密码错误',
                 icon: 'error',
-                timer: 1500
+                timer: 1500,
+                button:false
               }).then((res) => {
                 resolve(false);
               });
