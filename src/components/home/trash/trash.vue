@@ -1,8 +1,15 @@
 <template>
+
   <div class="trash">
+
     <div class="top">
-      <span>废纸篓</span>
+
+      <span class="title">废纸篓</span>
+
+      <span class="clearTrash fa fa-trash-o" title="清空回收站" @click="clearTrash()"></span>
+
     </div>
+
     <div class="list" v-if="noteTrashList.length !== 0 || noteBookTrashList.length !== 0">
       <div class="noteList">
         <ul>
@@ -33,14 +40,18 @@
         </ul>
       </div>
     </div>
+
     <div class="store-logo" v-else>
       <span class="fa fa-trash-o logo"></span>
       <span>把不用的文件暂时放于此</span>
     </div>
+
   </div>
+
 </template>
 
 <script>
+
   import store from "../../../store";
   import baseService from '../../../Service/baseService';
   import trashService from '../../../Service/trashService';
@@ -62,6 +73,10 @@
         trashService.deleteExatly(id, type);
       },
 
+      clearTrash(){
+          trashService.clearTrash();
+      }
+
     },
 
     mounted() {
@@ -79,6 +94,7 @@
     }
 
   };
+
 </script>
 
 <style scoped lang="stylus">
@@ -90,12 +106,19 @@
       height: 80px;
       width: 400px;
       border-bottom: 3px solid #dce4ec;
-      span
+      padding-left :30px;
+      padding-right :30px;
+      .title
         font-size: 20px;
-        width: 400px;
-        padding-left: 30px;
         line-height: 50px;
         height: 50px;
+      .clearTrash
+        float :right;
+        font-size :30px;
+        height :50px;
+        line-height :50px;
+      &:hover
+        cursor :pointer;
     .list
       overflow-y: scroll
       overflow-x: hidden
@@ -176,6 +199,8 @@
               cursor: pointer;
               .note-right
                 opacity: 1;
+
+
 
     .store-logo
       text-align: center;

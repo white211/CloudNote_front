@@ -27,8 +27,8 @@ const trashService = {
               text: '彻底删除成功',
               icon: 'success',
               closeOnClickOutside: false,
-              timer:2000,
-              button:false
+              timer: 2000,
+              button: false
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -55,8 +55,8 @@ const trashService = {
               text: '彻底删除成功',
               icon: 'success',
               closeOnClickOutside: false,
-              timer:2000,
-              button:false
+              timer: 2000,
+              button: false
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -100,9 +100,9 @@ const trashService = {
               title: '',
               text: '已还原到笔记列表',
               icon: 'success',
-              timer:2000,
+              timer: 2000,
               closeOnClickOutside: false,
-              button:false
+              button: false
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -129,7 +129,7 @@ const trashService = {
           userId: store.state.user.cn_user_id,
           noteBookId: item.cn_notebook_id,
           noteBookType: 1,
-          updateType:1
+          updateType: 1
         }).then((res) => {
           console.log(res);
           if (res.data.status === 0) {
@@ -137,8 +137,8 @@ const trashService = {
               title: '',
               text: '已还原到笔记本列表',
               icon: 'success',
-              button:false,
-              timer:2000,
+              button: false,
+              timer: 2000,
             }).then((res) => {
               store.commit("noteBookList", baseService.getNoteBookList());
               store.commit("noteList", baseService.getNoteList());
@@ -159,6 +159,42 @@ const trashService = {
 
   },
 
+  /**
+   * 清除回收站
+   * @returns {Promise<any>}
+   */
+  clearTrash() {
+    return new Promise((resolve = () => {
+    }, reject = () => {
+    }) => {
+      api.post('/user/clearTrash.do',{
+        userId: store.state.user.cn_user_id
+      }).then((res) => {
+        if (res.data.status === 0) {
+          swal({
+            title: '',
+            text: '清除完成',
+            icon: 'success',
+            timer: 1500,
+            button: false
+          }).then((res)=>{
+            baseService.findNoteInTrash();
+            baseService.findNoteBookInTrash();
+          });
+        } else {
+          swal({
+            timer: 1500,
+            title: '',
+            text: '清除失败',
+            icon: 'error',
+            button: false
+          });
+        }
+      });
+    });
+
+
+  }
 
 };
 

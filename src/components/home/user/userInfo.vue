@@ -20,10 +20,12 @@
       </div>
 
       <div class="weather" v-else>
+
         <div class="refresh">
-          <span>获取天气失败，点击刷新</span>
-          <span class="fa fa-refresh" @click="regetweather()"></span>
+          <span>{{text}}</span>
+          <span v-if="getWeather.value == '获取失败，刷新'" class="fa fa-refresh" @click="regetweather()"></span>
         </div>
+
       </div>
 
       <div class="cal">
@@ -131,6 +133,7 @@
         },
         options: regionData,
         selectedOptions: [],
+        text:'获取中......'
       };
     },
 
@@ -145,10 +148,13 @@
           this.weather.time = this.getTime(res.last_update)+" "+"发布";
           this.weather.city = res.location.name;
         }else{
+          this.regetweather = '获取失败，刷新';
           this.getWeather = false;
         }
       });
+
       this.loadUserInfo();
+
     },
 
     methods: {

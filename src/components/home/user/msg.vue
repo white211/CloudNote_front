@@ -108,9 +108,9 @@
         // 第一步.将图片上传到服务器.
         var formdata = new FormData();
         formdata.append('image', e.target.files[0]);
-        formdata.append('userId', store.state.user.cn_user_id);
+        // formdata.append('userId', store.state.user.cn_user_id);
         axios({
-          url: 'http://127.0.0.1:8080/user/updataAvatar.do',
+          url: 'http://127.0.0.1:8080/note/uploadFile.do',
           method: 'post',
           data: formdata,
           headers: {
@@ -125,6 +125,7 @@
         });
         console.log(e.target.files[0]);
       },
+
     }
 
   };

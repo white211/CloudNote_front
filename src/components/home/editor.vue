@@ -83,7 +83,7 @@
               this.$router.replace({path: `/home/newNote`});
             });
           } else {
-            swal(res.msg);
+            swal(res.data.msg);
           }
         });
       },
