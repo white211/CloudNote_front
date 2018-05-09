@@ -133,7 +133,7 @@
         this.comAvatar = store.state.user.cn_user_avatar;
       }
       //获取分享笔记的内容
-      api.post('/note/findNoteById.do', {
+      api.post('/note/findNoteByIdFromShareNote.do', {
         noteId: this.$route.params.id,
         type:2
       })
@@ -151,7 +151,7 @@
           this.isloaded = true;
         });
       //获取作者的内容
-      api.post('/user/findUserById.do', {userId: this.$route.params.userId})
+      api.post('/user/findUserByIdFromShareNote.do', {userId: this.$route.params.userId})
         .then((res) => {
           if (res.data.status === 0) {
             console.log(res);

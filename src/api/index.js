@@ -21,6 +21,12 @@ api.interceptors.request.use((req) => {
 
 // http response 拦截器
 api.interceptors.response.use(res => {
+
+  // let flag =false ;
+  // if(router.currentRoute.path.indexOf("/note/shareNote")>-1){
+  //    flag = true;
+  // }
+
   const isNotAuthPath = globalConfig.notAuthPaths.indexOf(router.currentRoute.path) > -1;
   if (!isNotAuthPath && res.status === 401) {
     // token 过期
