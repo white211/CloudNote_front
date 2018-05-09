@@ -194,7 +194,7 @@
 
         swal('已经退出登陆', '', 'success').then((res) => {
           store.commit('user', null);
-          store.commit('token',null);
+          store.commit('token', null);
           store.commit("tagList", '');
           store.commit("noteList", '');
           store.commit("noteBookList", '');
@@ -202,8 +202,8 @@
           store.commit("noteBookTrashList", '');
           store.commit("noteStoreList", '');
           store.commit("noteBookStoreList", '');
-          store.commit("noteListInBook",'');
-          store.commit("noteListInTag",'');
+          store.commit("noteListInBook", '');
+          store.commit("noteListInTag", '');
           this.$router.push({path: '/login'});
         });
       },
@@ -223,7 +223,7 @@
           data: formdata,
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization':store.state.token
+            'Authorization': store.state.token
           },
         }).then((res) => {
           if (res.data.status === 0) {
@@ -250,7 +250,7 @@
       if (this.activeNoteId) {
         api.post('/note/findNoteById.do', {
           noteId: this.activeNoteId,
-          type:1
+          type: 1
         }).then((res) => {
           this.noteLabelId = res.data.data.cn_note_label_id,
             this.noteBookId = res.data.data.cn_note_book_id,
@@ -449,14 +449,20 @@
                 margin-right: 15px;
 
     .my-container
-      position: absolute
-      height: 86%
-      left: 160px
-      right: 80px
-      top: 10px
-      bottom: 0px
-      background-color: white
-      /*border :1px solid black;*/
+      position: absolute;
+      height: 100%;
+      left: 80px;
+      right: 0;
+      top: 0;
+      bottom: 0px;
+      background-color: #fff;
+      /*position: absolute*/
+      /*height: 86%*/
+      /*left: 160px*/
+      /*right: 80px*/
+      /*top: 10px*/
+      /*bottom: 0px*/
+      /*background-color: white*/
       #bar
         margin: 0 auto;
         height: 55px;

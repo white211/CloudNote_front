@@ -247,18 +247,26 @@
 
 <style scoped lang="stylus">
   .userInfo
-    width: 1109px;
-    height: 600px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin-left: -554px;
-    margin-top: -270px;
+    margin :auto;
+    height :600px;
+    left :0;
+    right :0;
+    top:0;
+    bottom :0;
+    max-width :1109px;
+    position :absolute;
+    min-width :1109px;
+    //width: 1109px;
+    //height: 600px;
+    //position: absolute;
+    //left: 50%;
+    //top: 50%;
+    //margin-left: -554px;
+    //margin-top: -270px;
     .right
       float: right;
       width: 280px;
       .weather
-        //background: linear-gradient(#5b1aff, #32acff);
         width: 280px;
         box-shadow: 0px 2px 8px 1px rgba(0, 0, 0, 0.2);
         height: 180px;

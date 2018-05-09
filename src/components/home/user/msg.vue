@@ -31,7 +31,7 @@
       <div class="input">
         <el-input
           type="textarea"
-          :rows="15"
+          :rows="10"
           placeholder="请输入内容"
           v-model="content"
         >
@@ -133,16 +133,24 @@
 
 <style scoped lang="stylus">
   .msg
-    width: 800px;
-    height: 500px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin-left: -400px;
-    margin-top: -300px;
-    padding-top: 50px;
-    user-select none;
-
+    //width: 800px;
+    //height: 500px;
+    //position: absolute;
+    //left: 50%;
+    //top: 50%;
+    //margin-left: -400px;
+    //margin-top: -300px;
+    //padding-top: 50px;
+    height :500px;
+    position :absolute;
+    left :0;
+    right :0;
+    bottom :0;
+    top:0;
+    user-select :none;
+    min-width :800px;
+    margin: auto;
+    max-width :800px;
     .label
       width: 100px;
       height: 40px;
@@ -155,7 +163,6 @@
 
     .text
       width: 800px;
-      height: 330px;
       margin-top: 10px;
       .input
         display: inline-block;

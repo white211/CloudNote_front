@@ -1,8 +1,11 @@
 <template>
+
   <div id="editor">
+
     <div id="bar">
+
       <div class="com">
-        <span class="fa fa-book"></span>
+        <span class="fa fa-book sign"></span>
         <el-select v-model="noteBookId" placeholder="笔记本"
                    size="mini" class="select" filterable
         >
@@ -15,10 +18,11 @@
           </el-option>
         </el-select>
       </div>
+
       <div class="com">
-        <span class="fa fa-tags"></span>
+        <span class="fa fa-tags sign"></span>
         <el-select v-model="noteLabelId" placeholder="标签"
-                   size="mini" class="select"  filterable>
+                   size="mini" class="select" filterable>
           <el-option
             v-for="item in labelList"
             :key="item.cn_label_id"
@@ -28,15 +32,29 @@
           </el-option>
         </el-select>
       </div>
-      <div class="com">
+
+      <div class="title-save">
+
         <input type="text" placeholder="写下笔记标题" class="title" v-model="noteTitle"/>
+
+        <div class="saveBtn">
+
+          <el-button type="success" plain @click="newNote" id="saveBTN" >保存</el-button>
+
+        </div>
+
       </div>
-      <div class="com" style="float:right;">
-        <el-button type="success" plain @click="newNote" class="saveBtn">保存</el-button>
-      </div>
+
+      <!--<div class="com" style="float:right;">-->
+      <!--<el-button type="success" plain @click="newNote" class="saveBtn">保存</el-button>-->
+      <!--</div>-->
+
     </div>
+
     <mavon-editor style="height: 100%" v-model="noteContent" ref=md @imgAdd="imgAdd"></mavon-editor>
+
   </div>
+
 </template>
 
 <script>
@@ -45,7 +63,6 @@
   import swal from 'sweetalert';
   import axios from 'axios';
   import baseService from '../../Service/baseService';
-
 
   export default {
 
@@ -99,7 +116,7 @@
           data: formdata,
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization':store.state.token
+            'Authorization': store.state.token
           },
         }).then((res) => {
           var url = res.data.data;
@@ -123,7 +140,7 @@
       if (this.activeNoteId) {
         api.post('/note/findNoteById.do', {
           noteId: this.activeNoteId,
-          type:1
+          type: 1
         }).then((res) => {
           if (res.data.status === 0) {
             this.noteLabelId = res.data.data.cn_note_label_id || '',
@@ -172,7 +189,7 @@
         if (val) {
           api.post('/note/findNoteById.do', {
             noteId: val,
-            type:1
+            type: 1
           }).then((res) => {
             this.noteLabelId = res.data.data.cn_note_label_id || '';
             this.noteBookId = res.data.data.cn_note_book_id || '';
@@ -190,59 +207,68 @@
     },
 
   };
+
 </script>
 
 <style scoped lang="stylus">
   #editor
-    margin: auto;
-    width: 100%;
-    height: 100%;
+    margin: 0 auto;
+    width: 90%;
+    height: 90%;
     #bar
+      display: flex
       margin: 0 auto;
       height: 55px;
       margin-bottom: 5px;
       line-height: 55px;
-      .com
-        float: left
-        margin-right: 10px;
-        .select
-          width: 100px;
+      .title-save
+        flex: 1
+        display: flex;
+        height: 55px;
+        line-height: 55px;
+        float :left;
+        width :100%;
         .saveBtn
           width: 100px;
-          font-size: 16px;
-          text-align: center
-        #saveNote
-          height: 35px;
-          width: 70px;
-          border-radius: 5px;
-          font-size: 18px;
-          padding: 0;
-          background-color: rgb(163, 221, 130);
-          border: 1px solid #dce4ec;
-          &:hover
-            background-color: rgb(163, 221, 100);
-            cursor: pointer
-      .title
-        height: 50px;
-        line-height: 50px;
-        max-width: 600px;
-        border: 0;
-        outline: none;
-        font-size: 25px;
-        color: #3FB618;
-        padding-left: 5px;
-        &::-webkit-input-placeholder
-          font-size: 15px;
-          color: #687b7c;
-        &:-moz-placeholder
-          font-size: 15px;
-          color: #687b7c;
-        &::-moz-placeholder
-          font-size: 15px;
-          color: #687b7c;
-        &:-ms-placeholder
-          font-size: 15px;
-          color: #687b7c;
+          height: 55px;
+          margin-left :25px;
+          line-height :55px;
+          text-align :center;
+          #saveBTN
+            width :100%;
+        .title
+          height: 55px;
+          line-height: 55px;
+          flex: 1
+          border: 0;
+          outline: none;
+          font-size: 25px;
+          color: #3FB618;
+          padding-left: 5px;
+          &::-webkit-input-placeholder
+            font-size: 15px;
+            color: #687b7c;
+          &:-moz-placeholder
+            font-size: 15px;
+            color: #687b7c;
+          &::-moz-placeholder
+            font-size: 15px;
+            color: #687b7c;
+          &:-ms-placeholder
+            font-size: 15px;
+            color: #687b7c;
+      .com
+        float :left;
+        margin-right: 10px;
+        line-height: 55px;
+        width :130px;
+        /*border :1px solid black;*/
+        .sign
+          display: inline-block;
+        .select
+          width: 100px;
+          display :inline-block;
+
 
   .v-note-wrapper
     z-index: 0

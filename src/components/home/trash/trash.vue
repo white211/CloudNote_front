@@ -74,7 +74,11 @@
       },
 
       clearTrash(){
+        if((store.state.trashList.noteBookTrashList.length !== 0 && store.state.trashList.noteBookTrashList !== null )||(store.state.trashList.noteTrashList.length !== 0 && store.state.trashList.noteTrashList !== null )){
           trashService.clearTrash();
+        }else{
+          return ;
+        }
       }
 
     },
